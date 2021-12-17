@@ -10,6 +10,7 @@
 #include <iostream>
 using namespace std;
 ///////////////////////СДЕЛАТЬ ЗАКРЫТИЕ УРОВНЯ И ЗАПИСЬ ИГРОКА В ВЕКТОР, РАЗОБРАТЬСЯ С ЕСК, КООРДИНАТЫ /54
+// СМЕНИТЬ ПРАОЛЬ ПОЛЬЗОВАТЕЛЯ!!!!!!!!! ВАРИАНТЫ ДЕЙСТВИЙ
 bool Player::NewGame(vector<Player>& vec_of_players, Player& player) {
 
 	RenderWindow windowNick(VideoMode(800, 300), "NICK INPUT");// но размер 96
@@ -203,9 +204,36 @@ void Player::ChoosePlayer(vector<Player>& vec_of_players, Player& player)
 	windowChoice.close();
 	///
 }
+void UserMenu(string& file, vector<Player>& vec_of_players, Player& player, RenderWindow& window) {
+	int i = FindPlayerIndex(vec_of_players, player.GetNick());
+	while (true) {
+		system("pause>null");
+		system("cls");
+		//cin.clear();
+		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~\n" <<
+			" | 1 | ИГРА			  |\n" <<
+			" | 2 | Сменить пароль    |\n" <<
+			" | 0 | Назад             |\n" <<
+			"~~~~~~~~~~~~~~~~~~~~~~~~~\n  -> ";
+		int   choice = checkDiapason(0, 2);
+		switch (choice) {
+		case 1: if (player.GetAccess() == 1)
+					Game(window, player);
+			  else {// Если нет доступа
+			cout << "\nВаш аккаунт \x1b[31mнедоступен\x1b[35m :(\n";
+			system("pause>null");
+				}
+			break;
+		case 2: changePassword(file, vec_of_players, i);
+			break;
+		case 0:// ВЫХОД В ГЛАВНОЕ ОКОННОЕ МЕНЮ
+			return;
+		}
+	}
+}
 bool Game(RenderWindow& w, Player& player) {
 	RenderWindow window(VideoMode(1700, 900), "THE Adventures");
-	view.reset(FloatRect(0, 0, 1700, 800));
+	view.reset(FloatRect(0, 0, 700, 350));
 	Font font;
 	font.loadFromFile("Jokerman.ttf");
 
@@ -234,7 +262,7 @@ bool Game(RenderWindow& w, Player& player) {
 		while (window.isOpen()) {
 			float time = clock.getElapsedTime().asMicroseconds();
 			//clock_t start = clock();
-
+			viewmap(time, hero.GetX(), hero.GetY());
 			if (hero.GetCoin() < lvl.GetCoin()) { // Если собраны не все монетки уровня,
 				gameTime = gameClock.getElapsedTime().asSeconds();// то игровое время идёт вперед
 			}
@@ -251,7 +279,8 @@ bool Game(RenderWindow& w, Player& player) {
 					window.close();
 			}
 			hero.Update(time, TileMap);
-			viewmap(time);/// ПЕРЕДАТЬ КАСАНИЕ 0 ЧТОБЫ НЕ ДВИГАЛАСЬ------------------------------------------------------------------------------------------------
+			//view.setCenter;
+			/// ПЕРЕДАТЬ КАСАНИЕ 0 ЧТОБЫ НЕ ДВИГАЛАСЬ------------------------------------------------------------------------------------------------
 			changeview();
 			window.setView(view); // Контроль, какая часть видна
 			window.clear(Color(255, 255, 255));//77 83 1404
@@ -270,7 +299,7 @@ bool Game(RenderWindow& w, Player& player) {
 					window.draw(mapSprite);
 				}
 
-			Text currentStatus("", font, 40);
+			Text currentStatus("", font, 20);
 			CurrentStatus(currentStatus, hero.GetHealth(), gameTime, hero.GetCoin());
 			if (hero.GetCoin() < lvl.GetCoin())window.draw(currentStatus);//рисую этот текст
 			else {
@@ -310,7 +339,7 @@ void CurrentStatus(Text& text, int health, int gameTime, int coin) {
 		"\nTIME: " + gameTimeString.str() +
 		"\nCOIN " + heroCoinString.str());//задаем строку тексту и вызываем сформированную выше строку методом .str()
 
-	text.setPosition(view.getCenter().x + 570, view.getCenter().y - 350);//задаем позицию текста, отступая от центра камеры
+	text.setPosition(view.getCenter().x + 170, view.getCenter().y - 150);//задаем позицию текста, отступая от центра камеры
 }
 void LevelEnd(Text& text, int levelNum, int gameTime, int coin) {
 	text.setCharacterSize(60);
@@ -452,7 +481,7 @@ void Player::LogIn(string& file, vector <Player>& vec_of_players) {
 	string nick, password, salt, hash;
 	for (int attempt = 2; attempt > -1; attempt--) {
 		system("cls");
-		cout << "~~~~~~~~~~~~~~~~~~ АВТОРИЗАЦИЯ ~~~~~~~~~~~~~~~~~~~~\n" <<
+		cout << "\x1b[35m~~~~~~~~~~~~~~~~~~ АВТОРИЗАЦИЯ ~~~~~~~~~~~~~~~~~~~~\n" <<
 			"Введите логин: ";
 		while (true) {
 			getline(cin, nick);
@@ -481,26 +510,24 @@ void Player::LogIn(string& file, vector <Player>& vec_of_players) {
 				this->hash = vec_of_players[i].hash;
 				this->highScore = vec_of_players[i].highScore;
 				this->salt = vec_of_players[i].salt;
-				if (vec_of_players[i].access != 1) {// Если есть доступ
-					cout << "\nВаш аккаунт \x1b[31mнедоступен\x1b[35m :(\n";
-					system("pause>null");
-				}
+			
 				return;
 			}
 			//ВЫЗОВ ИНТЕРФЕЙСА______________________________________ 
 		}
-		cout << "\n\tНеверное имя пользователя или пароль\n" <<
+		cout << "\n\t\x1b[31mНеверное имя пользователя или пароль\x1b[35m\n" <<
 			"\n\tКоличество оставшихся попыток: " << attempt << endl;
-		system("pause>null");
+		if(attempt!=0)
+			system("pause>null");
 	}
-	cout << "Попробуйте позже!\n";
-
+	cout << "\n\tПопробуйте позже!\n";
+	system("pause>null");
 }
 void changePassword(string& file, vector <Player>& vec_of_players, int i) {
-	system("cls");
-	cout << "-------------Изменение пароля---------------";
-	for (int attempt = 3; attempt > 0; attempt--) {
 
+	for (int attempt = 3; attempt > 0; attempt--) {
+		system("cls");
+		cout << "-------------Изменение пароля---------------";
 		cout << "\nВведите старый пароль: ";
 		string old_password = enterPassword();
 		string salt = vec_of_players[i].salt;
@@ -512,7 +539,8 @@ void changePassword(string& file, vector <Player>& vec_of_players, int i) {
 			string hash_pass_with_salt = sha256(sha256(new_password + salt) + sha256(new_password));
 			vec_of_players[i].hash = hash_pass_with_salt;
 			vec_of_players[i].salt = salt;
-			cout << "Пароль \x1b[31mуспешно\x1b[35m изменён";
+			cout << "Пароль \x1b[32mуспешно\x1b[35m изменён";
+			return;
 		}
 		else cout << "Пароль введён \x1b[31mневерно\x1b[35m\n" <<
 			"Количество оставшихся попыток: " << attempt << endl;
@@ -552,7 +580,7 @@ string createNewLogin(vector <Player> vec_of_players) {
 
 	while (flag == true) {
 		system("cls");
-		cout << "Введите никнейм: ";
+		cout << "\x1b[35mВведите никнейм: ";
 		cin.clear();
 		getline(cin, nick);
 		while (i < vec_of_players.size() && repeat == false) {
@@ -652,12 +680,13 @@ void ShowPlayersForAdmin(vector<Player>& vec_of_players) {
 	AdminTableHead();
 	for (int i = 0; i < vec_of_players.size(); i++) {
 		int id = i + 1;
-		cout << '|' << setw(3) << id << setw(2) << ' |' << vec_of_players[i].nick <<
-			setw(21 - vec_of_players[i].nick.length()) << '|' <<
-			vec_of_players[i].role << setw(4) << '|' << setw(13 - vec_of_players[i].role.length()) <<
-			vec_of_players[i].access << '| ' << setw(4) <<
-			vec_of_players[i].level << setw(4) << '|' << setw(4) <<
-			vec_of_players[i].highScore << setw(4) << '|';
+		cout << '|' << setw(2) << id << setw(2) <<"  |  " << vec_of_players[i].nick <<
+			setw(23 - vec_of_players[i].nick.length()) << "|  " <<
+			vec_of_players[i].role << setw(15 - vec_of_players[i].role.length()) <<
+			 "|    " <<
+			vec_of_players[i].access << "     |" << setw(5) <<
+			vec_of_players[i].level << setw(5) << '|' << setw(4) <<
+			vec_of_players[i].highScore << setw(11) << '|';
 		if (i != vec_of_players.size() - 1)
 			cout << "\n|----|----------------------+------------+----------+---------+--------------|\n";
 		else
@@ -861,18 +890,24 @@ void SearchByScore(vector <Player> vec_of_players) {
 	system("pause>null");
 	return;
 }
+int FindPlayerIndex(vector<Player> vec_of_players, string nick) {
+	for (int i = 0; i < vec_of_players.size(); i++) {
+		if (nick == vec_of_players[i].GetNick())
+			return i;
+	}
+}
 //---------------------АДМИН---------------------
 void adminMenu(string& file, vector<Player>& vec_of_players, RenderWindow& window) {// Передаем сам вектор и номер аккаунта
 	while (true) {
 		system("pause>null");
 		system("cls");
 		//cin.clear();
-		cout << "~~~~~~~~~~~~~~~~~\n" <<
-			" | 1 | Работа с игроками\n" <<
-			" | 2 | Сменить пароль\n" <<
-			" | 3 | ИГРА\n" <<
-			" | 0 | Назад\n" <<
-			"~~~~~~~~~~~~~~~~~\n\n  -> ";
+		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~\n" <<
+		       " | 1 | Работа с игроками |\n" <<
+			   " | 2 | Сменить пароль    |\n" <<
+			   " | 3 | ИГРА              |\n" <<
+			   " | 0 | Назад             |\n" <<
+			    "~~~~~~~~~~~~~~~~~~~~~~~~~\n  -> ";
 		int   choice = checkDiapason(0, 3);
 		switch (choice) {
 		case 1: adminSystemWorkMenu(file, vec_of_players);
@@ -892,11 +927,12 @@ void adminSystemWorkMenu(string& file, vector <Player>& vec_of_players) {
 		system("cls");
 		cin.clear();
 
-		cout << "~~~~~~~~~~~~~~~~~\n" <<
-			" | 1 | Просмотр\n" <<
-			" | 2 | Изменить доступ\n | 3 | Удалить\n" <<
-			"\n | 0 | Назад\n" <<
-			" ~~~~~~~~~~~~~~~~~\n\n  -> ";
+		cout << "~~~~~~~~~~~~~~~~~~~~~~~\n" <<
+			   " | 1 | Просмотр        |\n" <<
+			   " | 2 | Изменить доступ |\n"<<
+		       " | 3 | Удалить         |\n" <<
+			   " | 0 | Назад           |\n" <<
+			    "~~~~~~~~~~~~~~~~~~~~~~~\n\n  -> ";
 		int choice = checkDiapason(0, 3);
 		switch (choice) {
 		case 1: ShowPlayersForAdmin(vec_of_players);
@@ -912,6 +948,7 @@ void adminSystemWorkMenu(string& file, vector <Player>& vec_of_players) {
 }
 void ChangeAccess(string& file, vector <Player>& vec_of_players) {
 	while (true) {
+		system("cls");
 		ShowPlayersForAdmin(vec_of_players);
 		cout << "\n\n\tВведите номер игрока, доступ которому нужно изменить: ";
 		int num = checkDiapason(1, vec_of_players.size());
@@ -919,14 +956,14 @@ void ChangeAccess(string& file, vector <Player>& vec_of_players) {
 		if (num == 0) cout << "Настройка доступа администратора невозможна!\n";
 		else {
 			cout << "Вы действительно хотите изменить доступ игроку " << vec_of_players[num].GetNick() << " ?\n" <<
-				"\n\t 1 - да\n\t 0 - нет. Я так шучу.\n\t->";
+				"\n\t 1 - да\n\t 0 - нет. Я так шучу.\n\t ->";
 			bool choice = isTrue();
 			if (choice == true)
 				vec_of_players[num].SetAccess(changeOpposite(vec_of_players[num].GetAccess()));
 
 		}
 		Player p;
-		cout << "\n\n\t 1 - Продолжить\n\t 0 - назад\n\t\t -> ";
+		cout << "\n\t 1 - Продолжить\n\t 0 - назад\n\t -> ";
 		int choice = checkDiapason(0, 1);
 		if (choice == 0) {
 			p.writeFilePlayers(file, vec_of_players);

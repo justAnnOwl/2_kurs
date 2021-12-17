@@ -71,6 +71,7 @@ public:
 	  bool NewGame(vector<Player>& vec_of_players, Player& player);
 	  void LogIn(string& file, vector <Player>& vec_of_players);
 	  void SignUp(string& file, vector <Player>& vec_of_players);
+	 
 	  friend void ShowPlayersForAdmin(vector<Player>& vec_of_players);
 	  friend void ShowScore(vector<Player>& vec_of_players);
 	  friend void changePassword(string& file, vector <Player>& vec_of_players, int i);
@@ -86,7 +87,7 @@ string* ChangeLevelBecauseOfEnd(string* TileMap, int hight, int width);
 string createNewPassword();
 string enterPassword();
 string createNewLogin(vector <Player> vec_of_players);
-
+void UserMenu(string& file, vector<Player>& vec_of_players, Player& player, RenderWindow& window);
 //----------------------ÂÛÂÎÄ-----------------------------
 void CurrentStatus(Text& text, int health, int gameTime, int coin);
 void LevelEnd(Text& text, int levelNum, int gameTime, int coin);
@@ -109,6 +110,7 @@ void SearchPlayer(vector <Player>& vec_of_players);
 void SearchByLevel(vector<Player>& vec_of_players);
 void SearchByNick(vector <Player>& vec_of_players);
 void SearchByScore(vector <Player> vec_of_players);
+int FindPlayerIndex(vector<Player> vec_of_players, string nick);
 //---------------------ÀÄÌÈÍ---------------------
 void adminMenu(string& file, vector<Player>& vec_of_players, RenderWindow& window);
 void adminSystemWorkMenu(string& file, vector <Player>& vec_of_players);

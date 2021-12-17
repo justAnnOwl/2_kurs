@@ -48,6 +48,12 @@ public:
 		sprite.setOrigin(w /54, h /54); // Установка первоначального положения объекта 
 		///////////!!!!!!!!!!!!!! не по центру. а где-то в начале нужно посчитать по карте
 	}
+	double GetX() {
+		return x;
+	}
+	double GetY() {
+		return y;
+	}
 	int GetHealth() {
 		return health;
 	}
