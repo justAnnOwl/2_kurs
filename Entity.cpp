@@ -37,37 +37,65 @@ void Hero::KeyCheck()
 			//ïåğåìåñòèòü íà çåìëş
 			//isOnGround=true;
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::Escape))
+		else if (Keyboard::isKeyPressed(Keyboard::Escape))////////////////////////////////////////ÂÛÇÛÂÀÅÒ ÈÑÊËŞ×ÅÍÈß!!!!!!!!!!!
 		{
-			RenderWindow pauseWindow(VideoMode(500, 500), "PAUSE");
-			Texture pauseTexture;
-			pauseTexture.loadFromFile("images/pauseMenu.png");
+			bool flag = true;
+			RenderWindow pauseWindow(VideoMode(500, 300), "PAUSE");
+			Texture bgT;
+			bgT.loadFromFile("images/BirdsAndMountains.png");
+			Sprite bgS(bgT);
+			bgS.setPosition(0, 0);// 
 
-			Sprite pauseSprite(pauseTexture);
-			//pauseSprite.setPosition(view.getCenter().x, view.GetCenter().y);// 
-			pauseSprite.setPosition(850, 500);// 
+			Texture levelContinueT;
+			levelContinueT.loadFromFile("images/Buttons/LevelContinue.png");
+			Sprite levelContinueS(levelContinueT);
+			levelContinueS.setPosition(50, 50);///////////////////////////////////////////////////////////////////////////////=================================================================================
 
-			Texture menuButtonTexture;
-			menuButtonTexture.loadFromFile("images/pauseMenu.png");
+			Texture levelCancelT;
+			levelCancelT.loadFromFile("images/Buttons/ExitToMenu.png");
+			Sprite levelCancelS(levelCancelT);
+			levelCancelS.setPosition(50, 175);
+			int menuNum;
+			while (flag) {
+				levelContinueS.setColor(Color::White);
+				levelCancelS.setColor(Color::White);
+				menuNum = PauseKeyCheck(pauseWindow);
+				switch (menuNum) {
+				case 1:
+					levelContinueS.setColor(Color::Green);
+					if (Mouse::isButtonPressed(Mouse::Left)) {
+						state = stay;
+						speed = 0;
+						return;
+					}
+					break;
+				case 2: levelCancelS.setColor(Color::Green);
+					if (Mouse::isButtonPressed(Mouse::Left))
+					{
+						break;
+					}
 
-			Sprite menuButtonSprite(menuButtonTexture);
-			menuButtonSprite.setPosition(500, 500);///////////////////////////////////////////////////////////////////////////////=================================================================================
-			pauseWindow.clear();
-			pauseWindow.draw(menuButtonSprite);
-			pauseWindow.draw(pauseSprite);
-			pauseWindow.display();
-			system("pause");								   //m_render->window().close();
-				//else if (Keyboard::isKeyPressed(Keyboard::Down))&& íà ëåñòíèöå {
-				/*	state = down;
-				}*/
-				//else if( ESC )ÎÒÊĞÛÒÜ ÌÅÍŞ 
-				//if (!isKeyP)
+				}
+					pauseWindow.clear();
+					pauseWindow.draw(bgS);
+					pauseWindow.draw(levelContinueS);
+					pauseWindow.draw(levelCancelS);
+					pauseWindow.display();
+					//system("pause");								   //m_render->window().close();
+						//else if (Keyboard::isKeyPressed(Keyboard::Down))&& íà ëåñòíèöå {
+						/*	state = down;
+						}*/
+						//else if( ESC )ÎÒÊĞÛÒÜ ÌÅÍŞ 
+						//if (!isKeyP)
+					//system("pause");
+				
+			}
+
 		}
-			
-	}
-	else {
-		state = stay;
-		speed = 0;
+		else {
+			state = stay;
+			speed = 0;
+		}
 	}
 }
 void Hero:: CheckCollisionWithMap(float Dx, float Dy, string* TileMap ) {
@@ -97,6 +125,20 @@ void Hero:: CheckCollisionWithMap(float Dx, float Dy, string* TileMap ) {
 			 }
 		}
 	}
+}
+int PauseKeyCheck(RenderWindow&window) {
+
+	
+
+		int menuNum=0 ;
+		if (IntRect(50, 50, 400, 80).contains(Mouse::getPosition(window))) {
+			menuNum = 1;
+		}
+		if (IntRect(50, 175, 400, 80).contains(Mouse::getPosition(window))) {
+			menuNum = 2;
+		}
+		return menuNum;
+	
 }
 //bool IsSolid() {
 //	return TileMap solid or no  È ÏĞÅÄÀÒÜ Â Î ÂÜŞ ÄÂÈÆÅÍÈß ÊÀĞÒÛ

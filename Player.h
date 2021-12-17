@@ -80,7 +80,7 @@ public:
 };
 
 //------------------»√–¿------------------------
-bool Game(RenderWindow& window, Player& player);
+bool Game( Player& player);
 void SetHeroCoordinateForView(float x, float y);
 
 string* ChangeLevelBecauseOfEnd(string* TileMap, int hight, int width);

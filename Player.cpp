@@ -10,7 +10,7 @@
 #include <iostream>
 using namespace std;
 ///////////////////////СДЕЛАТЬ ЗАКРЫТИЕ УРОВНЯ И ЗАПИСЬ ИГРОКА В ВЕКТОР, РАЗОБРАТЬСЯ С ЕСК, КООРДИНАТЫ /54
-// СМЕНИТЬ ПРАОЛЬ ПОЛЬЗОВАТЕЛЯ!!!!!!!!! ВАРИАНТЫ ДЕЙСТВИЙ
+///ОКНО ЕСК
 bool Player::NewGame(vector<Player>& vec_of_players, Player& player) {
 
 	RenderWindow windowNick(VideoMode(800, 300), "NICK INPUT");// но размер 96
@@ -218,7 +218,7 @@ void UserMenu(string& file, vector<Player>& vec_of_players, Player& player, Rend
 		int   choice = checkDiapason(0, 2);
 		switch (choice) {
 		case 1: if (player.GetAccess() == 1)
-					Game(window, player);
+					Game(player);
 			  else {// Если нет доступа
 			cout << "\nВаш аккаунт \x1b[31mнедоступен\x1b[35m :(\n";
 			system("pause>null");
@@ -231,7 +231,7 @@ void UserMenu(string& file, vector<Player>& vec_of_players, Player& player, Rend
 		}
 	}
 }
-bool Game(RenderWindow& w, Player& player) {
+bool Game(Player& player) {
 	RenderWindow window(VideoMode(1700, 900), "THE Adventures");
 	view.reset(FloatRect(0, 0, 700, 350));
 	Font font;
@@ -244,7 +244,7 @@ bool Game(RenderWindow& w, Player& player) {
 		string* TileMap = lvl.levelMap;
 		//bool game = isGame(window);
 		Image mapImage;
-		mapImage.loadFromFile("1tiles.png");
+		mapImage.loadFromFile("tiles.png");
 		Texture mapTexture;
 		mapTexture.loadFromImage(mapImage);
 		Sprite mapSprite;
@@ -253,12 +253,22 @@ bool Game(RenderWindow& w, Player& player) {
 		Image heroImage;
 		heroImage.loadFromFile("Queen.png");
 
-
+		Texture backgroundT;
+		backgroundT.loadFromFile("images/LevelBG2.png");
+		Sprite backgroundS(backgroundT);
+		switch (player.GetLevel()) {
+		case 1:backgroundS.setPosition(-600, -800);
+			break;
+		case 2: backgroundS.setPosition(-600, -300);
+			break;
+		}
+		
 		Hero hero(heroImage, "Hero", 50, 50, 54, 54);
 
 		Clock clock;
 		Clock gameClock;
 		int gameTime = 0;
+		view.setCenter(hero.GetX(), hero.GetY());
 		while (window.isOpen()) {
 			float time = clock.getElapsedTime().asMicroseconds();
 			//clock_t start = clock();
@@ -278,13 +288,13 @@ bool Game(RenderWindow& w, Player& player) {
 				if (event.type == Event::Closed)
 					window.close();
 			}
-			hero.Update(time, TileMap);
+			hero.Update( time, TileMap);
 			//view.setCenter;
 			/// ПЕРЕДАТЬ КАСАНИЕ 0 ЧТОБЫ НЕ ДВИГАЛАСЬ------------------------------------------------------------------------------------------------
 			changeview();
 			window.setView(view); // Контроль, какая часть видна
 			window.clear(Color(255, 255, 255));//77 83 1404
-
+			window.draw(backgroundS);
 			for (int i = 0; i < lvl.GetHight(); i++)
 				for (int j = 0; j < lvl.GetWidth(); j++)
 				{
@@ -326,6 +336,7 @@ bool Game(RenderWindow& w, Player& player) {
 	}
 	return true;//////////////////////////////////////////////nononoon
 }
+
 void CurrentStatus(Text& text, int health, int gameTime, int coin) {
 
 
@@ -914,7 +925,7 @@ void adminMenu(string& file, vector<Player>& vec_of_players, RenderWindow& windo
 			break;
 		case 2: changePassword(file, vec_of_players, 0);
 			break;
-		case 3: Game(window, vec_of_players[0]);
+		case 3: Game( vec_of_players[0]);
 			break;
 		case 0:// ВЫХОД В ГЛАВНОЕ ОКОННОЕ МЕНЮ
 			return;
