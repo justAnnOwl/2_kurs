@@ -8,18 +8,21 @@
 #include "Map.h"
 #include "Player.h"
 #include "Checking.h"
+#include <windows.h>
 using namespace std;
 using namespace sf;
-
-
-
 
 
 
 void  Menu(RenderWindow& window, vector<Player>& vec_of_players);
 
 
+
+
 int main() {
+	//HWND hWnd = GetConsoleWindow();//Получиление дескриптора(что-то вроде указателя на окно)
+	//MoveWindow(hWnd, 490, 150, 420, 450, TRUE);
+
 	setlocale(LC_ALL, "Rus");
 	Player player;
 	vector<Player> vec_of_players;
@@ -77,7 +80,7 @@ void Menu(RenderWindow& window, vector<Player>& vec_of_players) {
 		menuNum = 0;
 		window.clear(Color(129, 181, 221));
 
-		if (vec_of_players.size() != 0) {
+			if (vec_of_players.size() != 0) {
 			if (IntRect(570, 200, 300, 50).contains(Mouse::getPosition(window))) {
 				menuContinue.setColor(Color::Green);
 				menuNum = 1;
@@ -109,33 +112,35 @@ void Menu(RenderWindow& window, vector<Player>& vec_of_players) {
 		if (Mouse::isButtonPressed(Mouse::Left))
 		{
 			switch (menuNum) {
-			case 1: window.close();
+			case 1: //window.close();
 				//player.ChoosePlayer(vec_of_players, player)
+				window.setVisible(false);
 				player.LogIn(file, vec_of_players);
 				if (player.GetRole() == "user") {
-					if (player.GetAccess() == 1)
-						Game(window, player);
+					UserMenu(file, vec_of_players, player, window);
 				}
 				else if (player.GetRole() == "admin")
 					adminMenu(file, vec_of_players, window);
 				//}
 				break;
-			case 2: window.close();
+			case 2: //window.close();
 				//if (player.NewGame(vec_of_players, player)) {
+				window.setVisible(false);
 				player.SignUp(file, vec_of_players);
 				if (player.GetRole() == "user")
-					Game(window, player);
+					Game( player);
 				else if (player.GetRole() == "admin")
 					adminMenu(file, vec_of_players, window);
 				//}
 				break;
-			case 3: ShowScore(vec_of_players);
+			case 3:window.setVisible(false);
+				MenuShowScore(vec_of_players);
 				break;
 			case 4:player.writeFilePlayers(file, vec_of_players);
 				flag = false;
 				window.close();
 			}
-
+			window.setVisible(true);
 			//switch (menuNum) {
 			//case 1: isMenu = false;
 			//	// СОЗДАНИЕ ОКНА ВЫБОРА ИГРОКА

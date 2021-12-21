@@ -211,7 +211,7 @@ void UserMenu(string& file, vector<Player>& vec_of_players, Player& player, Rend
 		system("cls");
 		//cin.clear();
 		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~\n" <<
-			" | 1 | ИГРА			  |\n" <<
+			" | 1 | ИГРА              |\n" <<
 			" | 2 | Сменить пароль    |\n" <<
 			" | 0 | Назад             |\n" <<
 			"~~~~~~~~~~~~~~~~~~~~~~~~~\n  -> ";
@@ -231,7 +231,7 @@ void UserMenu(string& file, vector<Player>& vec_of_players, Player& player, Rend
 		}
 	}
 }
-bool Game(Player& player) {
+void Game(Player& player) {
 	RenderWindow window(VideoMode(1700, 900), "THE Adventures");
 	view.reset(FloatRect(0, 0, 700, 350));
 	Font font;
@@ -239,104 +239,188 @@ bool Game(Player& player) {
 
 	bool flagLevel = true;
 	while (flagLevel) {
-
+	
 		Level lvl(player.GetLevel());
-		string* TileMap = lvl.levelMap;
-		//bool game = isGame(window);
-		Image mapImage;
-		mapImage.loadFromFile("tiles.png");
-		Texture mapTexture;
-		mapTexture.loadFromImage(mapImage);
-		Sprite mapSprite;
-		mapSprite.setTexture(mapTexture);
+		if (player.GetLevel() < lvl.CountLevels()) {
+			string* TileMap = lvl.levelMap;
+			//bool game = isGame(window);
+			Image mapImage;
+			mapImage.loadFromFile("tiles.png");
+			Texture mapTexture;
+			mapTexture.loadFromImage(mapImage);
+			Sprite mapSprite;
+			mapSprite.setTexture(mapTexture);
 
-		Image heroImage;
-		heroImage.loadFromFile("Queen.png");
+			Image heroImage;
+			heroImage.loadFromFile("Queen.png");
 
-		Texture backgroundT;
-		backgroundT.loadFromFile("images/LevelBG2.png");
-		Sprite backgroundS(backgroundT);
-		switch (player.GetLevel()) {
-		case 1:backgroundS.setPosition(-600, -800);
-			break;
-		case 2: backgroundS.setPosition(-600, -300);
-			break;
-		}
-		
-		Hero hero(heroImage, "Hero", 50, 50, 54, 54);
-
-		Clock clock;
-		Clock gameClock;
-		int gameTime = 0;
-		view.setCenter(hero.GetX(), hero.GetY());
-		while (window.isOpen()) {
-			float time = clock.getElapsedTime().asMicroseconds();
-			//clock_t start = clock();
-			viewmap(time, hero.GetX(), hero.GetY());
-			if (hero.GetCoin() < lvl.GetCoin()) { // Если собраны не все монетки уровня,
-				gameTime = gameClock.getElapsedTime().asSeconds();// то игровое время идёт вперед
+			Texture backgroundT;
+			backgroundT.loadFromFile("images/LevelBG2.png");
+			Sprite backgroundS(backgroundT);
+			switch (player.GetLevel()) {
+			case 1:backgroundS.setPosition(-600, -800);
+				break;
+			case 2: backgroundS.setPosition(-600, -300);
+				break;
 			}
-			else { 
-				view.move(0.8, 0); // Карта движется вправо
-			}
-			clock.restart();
-			time = time / 200;
 
-			Event event;
-			while (window.pollEvent(event))// Пока есть системное событие, обрабатываем его
-			{
-				if (event.type == Event::Closed)
-					window.close();
-			}
-			hero.Update( time, TileMap);
-			//view.setCenter;
-			/// ПЕРЕДАТЬ КАСАНИЕ 0 ЧТОБЫ НЕ ДВИГАЛАСЬ------------------------------------------------------------------------------------------------
-			changeview();
-			window.setView(view); // Контроль, какая часть видна
-			window.clear(Color(255, 255, 255));//77 83 1404
-			window.draw(backgroundS);
-			for (int i = 0; i < lvl.GetHight(); i++)
-				for (int j = 0; j < lvl.GetWidth(); j++)
+			Hero hero(heroImage, "Hero", 50, 50, 54, 54);
+
+			Clock clock;
+			Clock gameClock;
+			int gameTime = 0;
+			view.setCenter(hero.GetX(), hero.GetY());
+			while (window.isOpen()) {
+				float time = clock.getElapsedTime().asMicroseconds();
+				//clock_t start = clock();
+				viewmap(time, hero.GetX(), hero.GetY());
+				if (hero.GetCoin() < lvl.GetCoin()) { // Если собраны не все монетки уровня,
+					gameTime = gameClock.getElapsedTime().asSeconds();// то игровое время идёт вперед
+				}
+				else {
+					view.move(0.8, 0); // Карта движется вправо
+				}
+				clock.restart();
+				time = time / 200;
+
+				Event event;
+				while (window.pollEvent(event))// Пока есть системное событие, обрабатываем его
 				{
-					if (TileMap[i][j] == ' ')  mapSprite.setTextureRect(IntRect(64, 0, 32, 32));
-					if (TileMap[i][j] == '0')  mapSprite.setTextureRect(IntRect(0, 0, 32, 32));
-					if ((TileMap[i][j] == 'c')) mapSprite.setTextureRect(IntRect(32, 0, 32, 32));
+					if (event.type == Event::Closed)
+						window.close();
+					if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+						int choice = SwitchEsc();
+						if (choice == 2) return;
+					}
+						
+				}
+				hero.Update(time, TileMap);
+				//view.setCenter;
+				/// ПЕРЕДАТЬ КАСАНИЕ 0 ЧТОБЫ НЕ ДВИГАЛАСЬ------------------------------------------------------------------------------------------------
+				changeview();
+				window.setView(view); // Контроль, какая часть видна
+				window.clear(Color(255, 255, 255));//77 83 1404
+				window.draw(backgroundS);
+				for (int i = 0; i < lvl.GetHight(); i++)
+					for (int j = 0; j < lvl.GetWidth(); j++)
+					{
+						if (TileMap[i][j] == ' ')  mapSprite.setTextureRect(IntRect(64, 0, 32, 32));
+						if (TileMap[i][j] == '0')  mapSprite.setTextureRect(IntRect(0, 0, 32, 32));
+						if ((TileMap[i][j] == 'c')) mapSprite.setTextureRect(IntRect(32, 0, 32, 32));
 
-					mapSprite.setPosition(j * 32, i * 32); //раскидывает квадратики, превращая в карту.
-					//то есть задает каждому из них позицию.если убрать, 
-						//то вся карта нарисуется в одном квадрате 32 * 32 и мы увидим один квадрат
+						mapSprite.setPosition(j * 32, i * 32); //раскидывает квадратики, превращая в карту.
+						//то есть задает каждому из них позицию.если убрать, 
+							//то вся карта нарисуется в одном квадрате 32 * 32 и мы увидим один квадрат
 
-					window.draw(mapSprite);
+						window.draw(mapSprite);
+					}
+
+				Text currentStatus("", font, 20);
+				CurrentStatus(currentStatus, hero.GetHealth(), gameTime, hero.GetCoin());
+				if (hero.GetCoin() < lvl.GetCoin())window.draw(currentStatus);//рисую этот текст
+				else {
+					TileMap = ChangeLevelBecauseOfEnd(TileMap, lvl.GetHight(), lvl.GetWidth());
+					Text levelEndText("", font, 60);
+					LevelEnd(levelEndText, player.GetLevel(), gameTime, hero.GetCoin());
+					window.draw(levelEndText);
 				}
 
-			Text currentStatus("", font, 20);
-			CurrentStatus(currentStatus, hero.GetHealth(), gameTime, hero.GetCoin());
-			if (hero.GetCoin() < lvl.GetCoin())window.draw(currentStatus);//рисую этот текст
-			else {
-				TileMap = ChangeLevelBecauseOfEnd(TileMap, lvl.GetHight(), lvl.GetWidth());
-				Text levelEndText("", font, 60);
-				LevelEnd(levelEndText, player.GetLevel(), gameTime, hero.GetCoin());
-				window.draw(levelEndText);
+				window.draw(hero.GetSprite());
+				window.display();
+
+
+
+				if (hero.GetCoin() == lvl.GetCoin())
+					window.close();
 			}
-
-			window.draw(hero.GetSprite());
-			window.display();
-
-
-
-
+			////////////// ПРОДОЛЖИТЬ ИЛИ НЕТ
+			if (hero.isAlive) {
+				player.SetLevel(player.GetLevel() + 1);
+				if (hero.GetCoin() > player.GetHighScore()) {
+					player.SetTimeHighScore(hero.GetCoin());
+				}
+				Game(player);
+			}
 		}
-		////////////// ПРОДОЛЖИТЬ ИЛИ НЕТ
-		if (hero.isAlive) {
-			player.SetLevel(player.GetLevel() + 1);
-			if (hero.GetCoin() > player.GetHighScore()) {
-				player.SetTimeHighScore(hero.GetCoin());
+		else {
+			while (window.isOpen())
+			{
+				
+				sf::Event event;
+				while (window.pollEvent(event))
+				{
+					Texture gameOverT;
+					gameOverT.loadFromFile("images/gameOver.jpg");
+					Sprite gameOver(gameOverT);
+					window.draw(gameOver);
+					window.display();
+
+					if (event.type == sf::Event::Closed)
+						window.close();
+				}
 			}
+			
 		}
 	}
-	return true;//////////////////////////////////////////////nononoon
+	//////////////////////////////////////////////nononoon
 }
+int SwitchEsc(){
+	{
+		bool flag = true;
+		RenderWindow pauseWindow(VideoMode(500, 300), "PAUSE");
+		Texture bgT;
+		bgT.loadFromFile("images/BirdsAndMountains.png");
+		Sprite bgS(bgT);
+		bgS.setPosition(0, 0);// 
 
+		Texture levelContinueT;
+		levelContinueT.loadFromFile("images/Buttons/LevelContinue.png");
+		Sprite levelContinueS(levelContinueT);
+		levelContinueS.setPosition(50, 50);///////////////////////////////////////////////////////////////////////////////=================================================================================
+
+		Texture levelCancelT;
+		levelCancelT.loadFromFile("images/Buttons/ExitToMenu.png");
+		Sprite levelCancelS(levelCancelT);
+		levelCancelS.setPosition(50, 175);
+		int menuNum;
+		while (flag) {
+			levelContinueS.setColor(Color::White);
+			levelCancelS.setColor(Color::White);
+			menuNum = PauseKeyCheck(pauseWindow);
+			switch (menuNum) {
+			case 1:
+				levelContinueS.setColor(Color::Green);
+				if (Mouse::isButtonPressed(Mouse::Left)) {
+				/*	state = stay;
+					speed = 0;*/
+					return 1;
+				}
+				break;
+			case 2: levelCancelS.setColor(Color::Green);
+				if (Mouse::isButtonPressed(Mouse::Left))
+				{
+					return 2;
+				}
+
+			}
+			pauseWindow.clear();
+			pauseWindow.draw(bgS);
+			pauseWindow.draw(levelContinueS);
+			pauseWindow.draw(levelCancelS);
+			pauseWindow.display();
+			//system("pause");								   //m_render->window().close();
+				//else if (Keyboard::isKeyPressed(Keyboard::Down))&& на лестнице {
+				/*	state = down;
+				}*/
+				//else if( ESC )ОТКРЫТЬ МЕНЮ 
+				//if (!isKeyP)
+			//system("pause");
+
+		}
+
+	}
+
+}
 void CurrentStatus(Text& text, int health, int gameTime, int coin) {
 
 
@@ -673,16 +757,23 @@ string enterPassword() {
 
 //----------------------ВЫВОД-----------------------------
 void MenuShowScore(vector<Player>& vec_of_players) {
+	
 	while (true) {
-		cout << "\n\t CHOOSE: \n\t\t1 -  SORT\n\t\t2 - SEARCH\n\t\t" <<
-			"\n\t\t0 - cancel\n\n\t->:";
-		int choice = checkDiapason(0, 3);
+		system("cls");
+		ShowScore(vec_of_players);
+		cout << "\n~~~~~~~~~~~~~~~~~~~\n" <<
+			" | 1 | Сортировка  |\n" <<
+			" | 2 | Поиск       |\n" <<
+			" | 0 | Назад       |\n" <<
+			"~~~~~~~~~~~~~~~~~~~\n  -> ";
+		int choice = checkDiapason(0, 2);
 		if (choice == 0) return;
 		switch (choice) {
 		case 1: SortPlayers(vec_of_players);
 			break;
 		case 2: SearchPlayer(vec_of_players);
 			break;
+		case 0: return;
 		}
 	}
 }
@@ -706,22 +797,24 @@ void ShowPlayersForAdmin(vector<Player>& vec_of_players) {
 
 }
 void ShowScore(vector<Player>& vec_of_players) {
+	ScoreTableHead();
 	if (vec_of_players.size() < 1) {
 		cout << "\n\tNO PLAYERS";
 	}
 	else {
 		for (int i = 0; i < vec_of_players.size(); i++) {
-			cout << "| " << setw(3) << i + 1 << setw(2) <<
+			cout << "| " << i + 1 << setw(3) <<
 				" |" << vec_of_players[i].GetNick() << setw(23 - vec_of_players[i].GetNick().length()) <<
-				'|' << setw(7) << vec_of_players[i].GetLevel() << setw(7) << '|' << setw(10) <<
-				vec_of_players[i].GetHighScore() << setw(8) << '|';
+				'|' << setw(7) << vec_of_players[i].GetLevel() << setw(8) << '|' << setw(10) <<
+				vec_of_players[i].GetHighScore() << setw(11) << '|';
 			if (i != vec_of_players.size() - 1)
-				cout << "\n|----|----------------------|--------------|---------------------|\n";
+				cout << "\n|----|----------------------|--------------|--------------------|\n";
 			else
 				cout << "\n=================================================================";
 
 		}
 	}
+	system("pause>null");
 }
 void AdminTableHead() {
 	cout << "==============================================================================" <<
@@ -735,17 +828,17 @@ void  ScoreTableHead() {
 }
 
 //--------------------СОРТИРОВКА---------------------
-void SortPlayers(vector <Player>& vec_of_players) {
-	vector <Player> copy_vec;
+void SortPlayers(vector <Player> copy_vec) {
+	
 	while (true) {
 		system("cls");
-		ScoreTableHead();
-		ShowScore(vec_of_players);
+	//	ScoreTableHead();
+		ShowScore(copy_vec);
 		cout << "\n\t Sort by: \n\t\t1 -  NICK\n\t\t2 - LEVEL\n\t\t" <<
-			"3 - HIGH SCORE\n\t\t0 - cancel\n\n\t->:";
+			"3 - HIGH SCORE\n\t\t0 - cancel\n\t\t\t-> ";
 		int choice = checkDiapason(0, 3);
 		if (choice == 0) return;
-		cout << " \n 1 - Up\n 2 - Down\n\n\t->: ";
+		cout << " \t\t\t   1 - Up\n\t\t\t   2 - Down\n\t\t\t    -> ";
 		int way = checkDiapason(1, 2);
 		switch (choice) {
 		case 1:
@@ -759,8 +852,8 @@ void SortPlayers(vector <Player>& vec_of_players) {
 			  else sort(copy_vec.begin(), copy_vec.end(), DownSortByScore);
 			break;
 		}
-		ScoreTableHead();
-		ShowScore(vec_of_players);
+		//ScoreTableHead();
+		//ShowScore(copy_vec);
 
 	}
 }
@@ -814,7 +907,7 @@ void SearchByLevel(vector<Player>& vec_of_players) {
 		}
 	}
 	if (counter != 0) {
-		ScoreTableHead();
+		//ScoreTableHead();
 		ShowScore(search_vec);
 		cout << counter << "\n players at all ";
 	}
@@ -873,7 +966,7 @@ void SearchByNick(vector <Player>& vec_of_players) {
 			if (vec_of_players[i].GetNick().substr(0, str.size()) == str)
 				search_vec.push_back(vec_of_players.at(i));
 		}
-		ScoreTableHead();
+		//ScoreTableHead();
 		ShowScore(search_vec);
 	}
 
@@ -893,7 +986,7 @@ void SearchByScore(vector <Player> vec_of_players) {
 		}
 	}
 	if (counter != 0) {
-		ScoreTableHead();
+		//ScoreTableHead();
 		ShowScore(search_vec);
 		cout << counter << "\n players at all ";
 	}

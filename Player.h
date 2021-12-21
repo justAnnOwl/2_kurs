@@ -80,7 +80,7 @@ public:
 };
 
 //------------------»√–¿------------------------
-bool Game( Player& player);
+void Game( Player& player);
 void SetHeroCoordinateForView(float x, float y);
 
 string* ChangeLevelBecauseOfEnd(string* TileMap, int hight, int width);
@@ -96,9 +96,9 @@ void ShowPlayersForAdmin(vector<Player>& vec_of_players);
 void ShowScore(vector<Player>& vec_of_players);
 void AdminTableHead();
 void  ScoreTableHead();
-
+int SwitchEsc();
 //--------------------—Œ–“»–Œ¬ ¿---------------------
-void SortPlayers(vector <Player>& vec_of_players);
+void SortPlayers(vector <Player> vec_of_players);
 bool UpSortByNick(Player a, Player b);
 bool DownSortByNick(Player a, Player b);
 bool UpSortByLevel(Player a, Player b);
