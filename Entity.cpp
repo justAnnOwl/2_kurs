@@ -37,61 +37,8 @@ void Hero::KeyCheck()
 			//переместить на землю
 			//isOnGround=true;
 		}
-		else if (Keyboard::isKeyPressed(Keyboard::Escape))////////////////////////////////////////ВЫЗЫВАЕТ ИСКЛЮЧЕНИЯ!!!!!!!!!!!
-		{
-			bool flag = true;
-			RenderWindow pauseWindow(VideoMode(500, 300), "PAUSE");
-			Texture bgT;
-			bgT.loadFromFile("images/BirdsAndMountains.png");
-			Sprite bgS(bgT);
-			bgS.setPosition(0, 0);// 
-
-			Texture levelContinueT;
-			levelContinueT.loadFromFile("images/Buttons/LevelContinue.png");
-			Sprite levelContinueS(levelContinueT);
-			levelContinueS.setPosition(50, 50);///////////////////////////////////////////////////////////////////////////////=================================================================================
-
-			Texture levelCancelT;
-			levelCancelT.loadFromFile("images/Buttons/ExitToMenu.png");
-			Sprite levelCancelS(levelCancelT);
-			levelCancelS.setPosition(50, 175);
-			int menuNum;
-			while (flag) {
-				levelContinueS.setColor(Color::White);
-				levelCancelS.setColor(Color::White);
-				menuNum = PauseKeyCheck(pauseWindow);
-				switch (menuNum) {
-				case 1:
-					levelContinueS.setColor(Color::Green);
-					if (Mouse::isButtonPressed(Mouse::Left)) {
-						state = stay;
-						speed = 0;
-						return;
-					}
-					break;
-				case 2: levelCancelS.setColor(Color::Green);
-					if (Mouse::isButtonPressed(Mouse::Left))
-					{
-						break;
-					}
-
-				}
-					pauseWindow.clear();
-					pauseWindow.draw(bgS);
-					pauseWindow.draw(levelContinueS);
-					pauseWindow.draw(levelCancelS);
-					pauseWindow.display();
-					//system("pause");								   //m_render->window().close();
-						//else if (Keyboard::isKeyPressed(Keyboard::Down))&& на лестнице {
-						/*	state = down;
-						}*/
-						//else if( ESC )ОТКРЫТЬ МЕНЮ 
-						//if (!isKeyP)
-					//system("pause");
-				
-			}
-
-		}
+		//else if (Keyboard::isKeyPressed(Keyboard::Escape))////////////////////////////////////////ВЫЗЫВАЕТ ИСКЛЮЧЕНИЯ!!!!!!!!!!!
+		
 		else {
 			state = stay;
 			speed = 0;
@@ -109,14 +56,15 @@ void Hero:: CheckCollisionWithMap(float Dx, float Dy, string* TileMap ) {
 					isOnGround = true;
 				}
 				if (Dy < 0) {//столкновение с верхними краями карты
-					y = i * 32 + 32;
+					y = i * 32+32;
 					dy = 0;
 				}
 				if (Dx > 0) {//с правым краем карты
 					x = j * 32 - w;
 				}
 				if (Dx < 0) {// с левым краем карты
-					x = j * 32 + 32;
+					x = j * 32+32 ;
+					dx = 0;
 				}
 			}
 			 if (TileMap[i][j] == 'c') {
@@ -126,20 +74,7 @@ void Hero:: CheckCollisionWithMap(float Dx, float Dy, string* TileMap ) {
 		}
 	}
 }
-int PauseKeyCheck(RenderWindow&window) {
 
-	
-
-		int menuNum=0 ;
-		if (IntRect(50, 50, 400, 80).contains(Mouse::getPosition(window))) {
-			menuNum = 1;
-		}
-		if (IntRect(50, 175, 400, 80).contains(Mouse::getPosition(window))) {
-			menuNum = 2;
-		}
-		return menuNum;
-	
-}
 //bool IsSolid() {
 //	return TileMap solid or no  И ПРЕДАТЬ В О ВЬЮ ДВИЖЕНИЯ КАРТЫ
 //}
@@ -155,7 +90,8 @@ void Hero::Update(float time, string* TileMap) {
 		break;
 	case down: dx = 0;
 		break;
-	case stay: break;
+	case stay: 		
+		break;
 	}
 	x += dx * time;
 	CheckCollisionWithMap(dx, 0, TileMap);// Обработка столкновений по Х
@@ -171,7 +107,7 @@ void Hero::Update(float time, string* TileMap) {
 	if (isAlive) {
 		//setPlayerCoordinateForView(x, y);
 	}
-	dy += 0.0015 * time;// ПОЧЕМУ ИМЕННО ЭТО ЧИСЛО???
+	dy += 0.0015 * time;
 }
 //void Enemy:: Update(float time) {
 //	if (name == "Enemy") {

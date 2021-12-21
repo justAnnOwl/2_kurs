@@ -204,7 +204,7 @@ void Player::ChoosePlayer(vector<Player>& vec_of_players, Player& player)
 	windowChoice.close();
 	///
 }
-void UserMenu(string& file, vector<Player>& vec_of_players, Player& player, RenderWindow& window) {
+void UserMenu(string& file, vector<Player>& vec_of_players, Player& player) {
 	int i = FindPlayerIndex(vec_of_players, player.GetNick());
 	while (true) {
 		system("pause>null");
@@ -226,7 +226,7 @@ void UserMenu(string& file, vector<Player>& vec_of_players, Player& player, Rend
 			break;
 		case 2: changePassword(file, vec_of_players, i);
 			break;
-		case 0:// ВЫХОД В ГЛАВНОЕ ОКОННОЕ МЕНЮ
+		case 0: // ВЫХОД В ГЛАВНОЕ ОКОННОЕ МЕНЮ
 			return;
 		}
 	}
@@ -241,7 +241,7 @@ void Game(Player& player) {
 	while (flagLevel) {
 	
 		Level lvl(player.GetLevel());
-		if (player.GetLevel() < lvl.CountLevels()) {
+		if (player.GetLevel() < lvl.CountLevels()+1) {
 			string* TileMap = lvl.levelMap;
 			//bool game = isGame(window);
 			Image mapImage;
@@ -289,8 +289,9 @@ void Game(Player& player) {
 					if (event.type == Event::Closed)
 						window.close();
 					if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-						int choice = SwitchEsc();
-						if (choice == 2) return;
+						int choice = SwitchEsc(); // 1 - continue
+						if (choice == 2) return; // 2  - exit to menu
+						else break;
 					}
 						
 				}
@@ -323,6 +324,7 @@ void Game(Player& player) {
 					Text levelEndText("", font, 60);
 					LevelEnd(levelEndText, player.GetLevel(), gameTime, hero.GetCoin());
 					window.draw(levelEndText);
+					//PRESS TO CONTINUE
 				}
 
 				window.draw(hero.GetSprite());
@@ -330,8 +332,10 @@ void Game(Player& player) {
 
 
 
-				if (hero.GetCoin() == lvl.GetCoin())
-					window.close();
+				if (hero.GetCoin() == lvl.GetCoin()) {
+					if(Keyboard::isKeyPressed(Keyboard::Space))
+						window.close();
+				}
 			}
 			////////////// ПРОДОЛЖИТЬ ИЛИ НЕТ
 			if (hero.isAlive) {
@@ -343,29 +347,22 @@ void Game(Player& player) {
 			}
 		}
 		else {
-			while (window.isOpen())
-			{
-				
-				sf::Event event;
-				while (window.pollEvent(event))
-				{
-					Texture gameOverT;
-					gameOverT.loadFromFile("images/gameOver.jpg");
-					Sprite gameOver(gameOverT);
-					window.draw(gameOver);
-					window.display();
+		window.close();
+			int choice = SwitchGameOver();
+				switch (choice) {
+				case 1: SetNullPlayer(player);
+					Game(player);
+					break;
+				case 2: 
+					return;
 
-					if (event.type == sf::Event::Closed)
-						window.close();
 				}
-			}
-			
 		}
 	}
 	//////////////////////////////////////////////nononoon
 }
 int SwitchEsc(){
-	{
+	
 		bool flag = true;
 		RenderWindow pauseWindow(VideoMode(500, 300), "PAUSE");
 		Texture bgT;
@@ -417,7 +414,53 @@ int SwitchEsc(){
 			//system("pause");
 
 		}
+}
+int SwitchGameOver() {
+	RenderWindow window(VideoMode(800, 1000), "GAME OVER");
 
+	Texture gameOverT;
+	gameOverT.loadFromFile("images/gameOver.jpg");
+	Sprite gameOver(gameOverT);
+	gameOver.setPosition(0, 0);
+
+	Texture startOverT;
+	startOverT.loadFromFile("images/Buttons/StartOver.png");
+	Sprite startOverS(startOverT);
+	startOverS.setPosition(200, 800);
+
+	Texture exitT;
+	exitT.loadFromFile("images/Buttons/ExitToMenu.png");
+	Sprite exitS(exitT);
+	exitS.setPosition(200, 919);
+	int menuNum;
+	bool flag = true;
+	while (flag)
+	{
+
+		
+		menuNum = GameOverKeyCheck(window);
+			gameOver.setColor(Color::White);
+			startOverS.setColor(Color::White);
+			exitS.setColor(Color::White);
+			switch (menuNum){
+			
+			case 1: startOverS.setColor(Color::Green);
+				if (Mouse::isButtonPressed(Mouse::Left)) 
+					return 1;
+				break;
+			case 2: exitS.setColor(Color::Green);
+				if (Mouse::isButtonPressed(Mouse::Left)) {
+					return 2;
+
+				}
+				break;
+				
+			}
+			window.clear();
+			window.draw(gameOver);
+			window.draw(startOverS);
+			window.draw(exitS);
+			window.display();
 	}
 
 }
@@ -436,8 +479,32 @@ void CurrentStatus(Text& text, int health, int gameTime, int coin) {
 
 	text.setPosition(view.getCenter().x + 170, view.getCenter().y - 150);//задаем позицию текста, отступая от центра камеры
 }
+int PauseKeyCheck(RenderWindow& window) {
+
+
+
+	int menuNum = 0;
+	if (IntRect(50, 50, 400, 80).contains(Mouse::getPosition(window))) {
+		menuNum = 1;
+	}
+	if (IntRect(50, 175, 400, 80).contains(Mouse::getPosition(window))) {
+		menuNum = 2;
+	}
+	return menuNum;
+
+}
+int GameOverKeyCheck(RenderWindow& window) {
+	int menuNum = 0;
+	if (IntRect(200,800 , 400, 80).contains(Mouse::getPosition(window))) {
+		menuNum = 1;
+	}
+	if (IntRect(200, 919, 400, 80).contains(Mouse::getPosition(window))) {
+		menuNum = 2;
+	}
+	return menuNum;
+}
 void LevelEnd(Text& text, int levelNum, int gameTime, int coin) {
-	text.setCharacterSize(60);
+	text.setCharacterSize(40);
 	text.setFillColor(Color::Green);
 	text.setStyle(Text::Bold);
 
@@ -451,9 +518,15 @@ void LevelEnd(Text& text, int levelNum, int gameTime, int coin) {
 	coin_str << coin;
 	text.setString("LEVEL  " + level_str.str() + "  COMPLETED!!!" +
 		"\n GAME TIME " + min_str.str() + ':' + sec_str.str() +
-		"\n COINS " + coin_str.str());
+		"\n COINS " + coin_str.str()+"\n press SPACE to continue");
 
 	text.setPosition(view.getCenter().x-300, view.getCenter().y-100);
+}
+void SetNullPlayer(Player& player) {// Обнуление всех достижений игрока
+	player.SetHighScore(0);
+	player.SetLevel(1);
+	player.SetTimeHighScore(0);
+
 }
 void SetHeroCoordinateForView(float x, float y) {
 
@@ -529,7 +602,7 @@ void Player::readFilePlayers(string& file, vector <Player>& vec_of_players, Rend
 		vec_of_players.push_back(temp);
 		cout << "\nРегистрация прошла \x1b[32mуспешно\x1b[35m ";
 		writeFilePlayers(file, vec_of_players);
-		adminMenu(file, vec_of_players, window);
+		adminMenu(file, vec_of_players);
 		fin.close();
 	}
 	else
@@ -551,6 +624,10 @@ void Player::readFilePlayers(string& file, vector <Player>& vec_of_players, Rend
 		//	mainMenu(vec_of_accounts, vec_of_students);
 	}
 
+}
+void ChangeVector(vector<Player>& vec_of_players, Player& player) {
+	int i = FindPlayerIndex(vec_of_players, player.GetNick());
+	vec_of_players[i] = player;
 }
 
 //---------------------АККАУНТЫ-----------------------
@@ -591,6 +668,7 @@ void Player::LogIn(string& file, vector <Player>& vec_of_players) {
 		i--;
 		cout << "\nВведите пароль:";
 		cin.clear();
+
 		password = enterPassword();
 
 		if (find_log == true) {// Если нашли такой логин///________
@@ -1001,7 +1079,7 @@ int FindPlayerIndex(vector<Player> vec_of_players, string nick) {
 	}
 }
 //---------------------АДМИН---------------------
-void adminMenu(string& file, vector<Player>& vec_of_players, RenderWindow& window) {// Передаем сам вектор и номер аккаунта
+void adminMenu(string& file, vector<Player>& vec_of_players) {// Передаем сам вектор и номер аккаунта
 	while (true) {
 		system("pause>null");
 		system("cls");

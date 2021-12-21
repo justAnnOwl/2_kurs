@@ -84,10 +84,14 @@ void Game( Player& player);
 void SetHeroCoordinateForView(float x, float y);
 
 string* ChangeLevelBecauseOfEnd(string* TileMap, int hight, int width);
+void ChangeVector(vector<Player>& vec_of_players, Player& player);
 string createNewPassword();
 string enterPassword();
 string createNewLogin(vector <Player> vec_of_players);
-void UserMenu(string& file, vector<Player>& vec_of_players, Player& player, RenderWindow& window);
+void UserMenu(string& file, vector<Player>& vec_of_players, Player& player);
+int PauseKeyCheck(RenderWindow& window);
+int GameOverKeyCheck(RenderWindow& window);
+void SetNullPlayer(Player& player);
 //----------------------¬€¬Œƒ-----------------------------
 void CurrentStatus(Text& text, int health, int gameTime, int coin);
 void LevelEnd(Text& text, int levelNum, int gameTime, int coin);
@@ -97,6 +101,7 @@ void ShowScore(vector<Player>& vec_of_players);
 void AdminTableHead();
 void  ScoreTableHead();
 int SwitchEsc();
+int SwitchGameOver();
 //--------------------—Œ–“»–Œ¬ ¿---------------------
 void SortPlayers(vector <Player> vec_of_players);
 bool UpSortByNick(Player a, Player b);
@@ -112,7 +117,7 @@ void SearchByNick(vector <Player>& vec_of_players);
 void SearchByScore(vector <Player> vec_of_players);
 int FindPlayerIndex(vector<Player> vec_of_players, string nick);
 //---------------------¿ƒÃ»Õ---------------------
-void adminMenu(string& file, vector<Player>& vec_of_players, RenderWindow& window);
+void adminMenu(string& file, vector<Player>& vec_of_players);
 void adminSystemWorkMenu(string& file, vector <Player>& vec_of_players);
 void ChangeAccess(string& file, vector <Player>& vec_of_players);
 int changeOpposite(int num);
