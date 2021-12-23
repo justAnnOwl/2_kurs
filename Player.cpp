@@ -272,7 +272,7 @@ void Game(Player& player) {
 			}
 
 			Hero hero(heroImage, "Hero", 50, 50, 54, 54);
-			Enemy enemy(enemyImage, "Enemy", 1000, lvl.GetHight() * 32 - 176, 48, 32);
+			Enemy enemy(enemyImage, "Enemy", 1000, lvl.GetHight() * 32 - 160, 48, 32);
 
 
 			Clock clock;

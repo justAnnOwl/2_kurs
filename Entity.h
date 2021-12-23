@@ -73,7 +73,7 @@ public:
 	Hero(Image& image, String Name, float X, float Y, int W, int H) : Entity(image, Name, X, Y, W, H) {
 		if (name == "Hero") {
 			sprite.setTextureRect(IntRect(0, 0, w, h));
-			sprite.setOrigin(w / 54., h / 54.);
+			sprite.setOrigin(w/2, h/2);
 			coin = 0;
 			health = 3;
 		}

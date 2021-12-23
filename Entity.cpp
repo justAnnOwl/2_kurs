@@ -95,7 +95,7 @@ void Hero::Update(float time, string* TileMap) {
 	CheckCollisionWithMap(dx, 0, TileMap);// Обработка столкновений по Х
 	y += dy * time;
 	CheckCollisionWithMap(0, dy, TileMap);// Обработка столкновений по Y
-	sprite.setPosition(x, y);
+	sprite.setPosition(x+w/2., y+h/1.85);
 	if (health < 1) {
 		isAlive = false;
 		//ВЫХОД ИЗ УРОВНЯ
@@ -129,7 +129,7 @@ void Enemy::CheckCollisionWithMap(float Dx, float Dy, string* TileMap) {
 void Enemy::Update(float time, string* TileMap) {
 	CheckCollisionWithMap(dx, 0, TileMap);
 	x += dx * time / 1.1;
-	sprite.setPosition(x + w / 2., y + h / 2.);
+	sprite.setPosition(x + w/2. , y + h );
 	if (health <= 0) {
 		isAlive = false;
 	}
