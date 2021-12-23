@@ -14,7 +14,7 @@ using namespace sf;
 
 
 
-void  Menu(RenderWindow& window, vector<Player>& vec_of_players);
+void  Menu(string& file,RenderWindow& window, vector<Player>& vec_of_players);
 
 
 
@@ -26,14 +26,14 @@ int main() {
 	setlocale(LC_ALL, "Rus");
 	Player player;
 	vector<Player> vec_of_players;
-	string file = "File_of_players";
+	 string file = "File_of_players.txt";
 	RenderWindow window(VideoMode(1700, 900), "THE Adventures");
 	player.readFilePlayers(file, vec_of_players, window);	
-    Menu(window, vec_of_players);//вызов меню
+    Menu(file, window, vec_of_players);//вызов меню
 	 // () - пр€моугольник, определ€ющий 
 	// установка по заданному пр-ку                            отображаемую зону
 	//Player player;
-
+	
 	
 }
 
@@ -42,8 +42,8 @@ int main() {
 
 
 
-void Menu(RenderWindow& window, vector<Player>& vec_of_players) {
-	string file = "File_of_players";
+void Menu(string& file, RenderWindow& window, vector<Player>& vec_of_players) {
+	//string file = "File_of_players";
 	Texture menuTextureNG, menuTextureC, menuTextureS, menuTextureE, menuBackground;
 	menuTextureNG.loadFromFile("images/Buttons/NEWGAME.png");
 	menuTextureC.loadFromFile("images/Buttons/CONTINUE.png");
@@ -115,13 +115,16 @@ void Menu(RenderWindow& window, vector<Player>& vec_of_players) {
 			case 1: //window.close();
 				//player.ChoosePlayer(vec_of_players, player)
 				window.setVisible(false);
-				player.LogIn(file, vec_of_players);
-				if (player.GetRole() == "user") {
-					UserMenu(file, vec_of_players, player, window);
+				if (player.LogIn(file, vec_of_players)) {
+					if (player.GetRole() == "user")
+						UserMenu(file, vec_of_players, player);
+
+					else if (player.GetRole() == "admin")
+						adminMenu(file, vec_of_players, player);
+
+					ChangeVector(vec_of_players, player);
 				}
-				else if (player.GetRole() == "admin")
-					adminMenu(file, vec_of_players, window);
-				//}
+			//	player.writeFilePlayers(file, vec_of_players);
 				break;
 			case 2: //window.close();
 				//if (player.NewGame(vec_of_players, player)) {
@@ -130,8 +133,10 @@ void Menu(RenderWindow& window, vector<Player>& vec_of_players) {
 				if (player.GetRole() == "user")
 					Game( player);
 				else if (player.GetRole() == "admin")
-					adminMenu(file, vec_of_players, window);
-				//}
+					adminMenu(file, vec_of_players, player);
+				ChangeVector(vec_of_players, player);
+				player.writeEndFilePlayers(file,player);
+				//player.writeFilePlayers(file, vec_of_players);
 				break;
 			case 3:window.setVisible(false);
 				MenuShowScore(vec_of_players);

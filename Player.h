@@ -24,11 +24,16 @@ class Player {
 public:
 	Player(string nick) {
 		this->nick = nick;
-		timeHighScore = 0;
+		timeHighScore = -1;
 		highScore = 0;
 		level = 0;
 	};
-	Player() { };
+	Player() {
+		this->nick = nick;
+		timeHighScore = -1;
+		highScore = 0;
+		level = 0;
+	};
 
 	void SetNick(string temp) {
 		nick = temp;
@@ -69,7 +74,7 @@ public:
 	  void readFilePlayers(string&, vector<Player>&, RenderWindow& window);
 	  void ChoosePlayer(vector<Player>& vec_of_players, Player& player);
 	  bool NewGame(vector<Player>& vec_of_players, Player& player);
-	  void LogIn(string& file, vector <Player>& vec_of_players);
+	  bool LogIn(string& file, vector <Player>& vec_of_players);
 	  void SignUp(string& file, vector <Player>& vec_of_players);
 	 
 	  friend void ShowPlayersForAdmin(vector<Player>& vec_of_players);
@@ -111,13 +116,13 @@ bool DownSortByLevel(Player a, Player b);
 bool UpSortByScore(Player a, Player b);
 bool DownSortByScore(Player a, Player b);
 //--------------------œŒ»— ---------------------
-void SearchPlayer(vector <Player>& vec_of_players);
-void SearchByLevel(vector<Player>& vec_of_players);
-void SearchByNick(vector <Player>& vec_of_players);
-void SearchByScore(vector <Player> vec_of_players);
+void SearchPlayer(vector<Player> vec_of_players);
+void SearchByLevel(vector<Player> vec_of_players);
+void SearchByNick(vector<Player> vec_of_players);
+void SearchByScore(vector<Player> vec_of_players);
 int FindPlayerIndex(vector<Player> vec_of_players, string nick);
 //---------------------¿ƒÃ»Õ---------------------
-void adminMenu(string& file, vector<Player>& vec_of_players);
+void adminMenu(string& file, vector<Player>& vec_of_players, Player& player);
 void adminSystemWorkMenu(string& file, vector <Player>& vec_of_players);
 void ChangeAccess(string& file, vector <Player>& vec_of_players);
 int changeOpposite(int num);

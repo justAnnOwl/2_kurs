@@ -218,12 +218,12 @@ void UserMenu(string& file, vector<Player>& vec_of_players, Player& player) {
 		int   choice = checkDiapason(0, 2);
 		switch (choice) {
 		case 1: if (player.GetAccess() == 1)
-					Game(player);
+			Game(player);
 			  else {// Если нет доступа
 			cout << "\nВаш аккаунт \x1b[31mнедоступен\x1b[35m :(\n";
 			system("pause>null");
-				}
-			break;
+		}
+			  break;
 		case 2: changePassword(file, vec_of_players, i);
 			break;
 		case 0: // ВЫХОД В ГЛАВНОЕ ОКОННОЕ МЕНЮ
@@ -232,31 +232,38 @@ void UserMenu(string& file, vector<Player>& vec_of_players, Player& player) {
 	}
 }
 void Game(Player& player) {
-	RenderWindow window(VideoMode(1700, 900), "THE Adventures");
-	view.reset(FloatRect(0, 0, 700, 350));
-	Font font;
-	font.loadFromFile("Jokerman.ttf");
+	bool gameFlag = true;
+	while (gameFlag) {
+		RenderWindow window(VideoMode(1700, 900), "THE Adventures");
+		view.reset(FloatRect(0, 0, 700, 350));
 
-	bool flagLevel = true;
-	while (flagLevel) {
-	
+		Font font;
+		font.loadFromFile("Jokerman.ttf");
+		Image mapImage;
+		mapImage.loadFromFile("tiles.png");
+		Texture mapTexture;
+		mapTexture.loadFromImage(mapImage);
+		Sprite mapSprite;
+		mapSprite.setTexture(mapTexture);
+
+		Image heroImage;
+		heroImage.loadFromFile("Queen.png");
+
+		Image enemyImage;
+		enemyImage.loadFromFile("images/Mouse1.png");
+		Texture backgroundT;
+		backgroundT.loadFromFile("images/LevelBG2.png");
+		Sprite backgroundS(backgroundT);
+
+
+		//bool flagLevel = true;
+
+
 		Level lvl(player.GetLevel());
-		if (player.GetLevel() < lvl.CountLevels()+1) {
+		if (player.GetLevel() < lvl.CountLevels() + 1) {
 			string* TileMap = lvl.levelMap;
 			//bool game = isGame(window);
-			Image mapImage;
-			mapImage.loadFromFile("tiles.png");
-			Texture mapTexture;
-			mapTexture.loadFromImage(mapImage);
-			Sprite mapSprite;
-			mapSprite.setTexture(mapTexture);
 
-			Image heroImage;
-			heroImage.loadFromFile("Queen.png");
-
-			Texture backgroundT;
-			backgroundT.loadFromFile("images/LevelBG2.png");
-			Sprite backgroundS(backgroundT);
 			switch (player.GetLevel()) {
 			case 1:backgroundS.setPosition(-600, -800);
 				break;
@@ -265,6 +272,8 @@ void Game(Player& player) {
 			}
 
 			Hero hero(heroImage, "Hero", 50, 50, 54, 54);
+			Enemy enemy(enemyImage, "Enemy", 1000, lvl.GetHight() * 32 - 176, 48, 32);
+
 
 			Clock clock;
 			Clock gameClock;
@@ -272,36 +281,39 @@ void Game(Player& player) {
 			view.setCenter(hero.GetX(), hero.GetY());
 			while (window.isOpen()) {
 				float time = clock.getElapsedTime().asMicroseconds();
-				//clock_t start = clock();
 				viewmap(time, hero.GetX(), hero.GetY());
-				if (hero.GetCoin() < lvl.GetCoin()) { // Если собраны не все монетки уровня,
+				if (hero.GetCoin() < lvl.GetCoin())  // Если собраны не все монетки уровня,
 					gameTime = gameClock.getElapsedTime().asSeconds();// то игровое время идёт вперед
-				}
-				else {
+				else
 					view.move(0.8, 0); // Карта движется вправо
-				}
+
 				clock.restart();
 				time = time / 200;
 
-				Event event;
-				while (window.pollEvent(event))// Пока есть системное событие, обрабатываем его
-				{
-					if (event.type == Event::Closed)
-						window.close();
-					if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-						int choice = SwitchEsc(); // 1 - continue
-						if (choice == 2) return; // 2  - exit to menu
-						else break;
-					}
-						
+				//Event event;
+				//while (window.pollEvent(event))// Пока есть системное событие, обрабатываем его
+				//{
+				/*	if (event.type == Event::Closed)
+						window.close();*/
+				if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+					int choice = SwitchEsc(); // 1 - continue
+					if (choice == 2) return; // 2  - exit to menu
+					else break;
 				}
+
+				//	}*/
+					/*if (hero.GetY() + 6 == enemy.GetY() && hero.GetX() == enemy.GetX()+98 ) {
+						hero.SetHealthMinus();
+					}*/
 				hero.Update(time, TileMap);
+				enemy.Update(time, TileMap);
 				//view.setCenter;
 				/// ПЕРЕДАТЬ КАСАНИЕ 0 ЧТОБЫ НЕ ДВИГАЛАСЬ------------------------------------------------------------------------------------------------
 				changeview();
 				window.setView(view); // Контроль, какая часть видна
 				window.clear(Color(255, 255, 255));//77 83 1404
 				window.draw(backgroundS);
+
 				for (int i = 0; i < lvl.GetHight(); i++)
 					for (int j = 0; j < lvl.GetWidth(); j++)
 					{
@@ -328,92 +340,87 @@ void Game(Player& player) {
 				}
 
 				window.draw(hero.GetSprite());
+				window.draw(enemy.GetSprite());
 				window.display();
 
 
 
 				if (hero.GetCoin() == lvl.GetCoin()) {
-					if(Keyboard::isKeyPressed(Keyboard::Space))
+					if (Keyboard::isKeyPressed(Keyboard::Space))
 						window.close();
 				}
 			}
 			////////////// ПРОДОЛЖИТЬ ИЛИ НЕТ
 			if (hero.isAlive) {
 				player.SetLevel(player.GetLevel() + 1);
-				if (hero.GetCoin() > player.GetHighScore()) {
-					player.SetTimeHighScore(hero.GetCoin());
-				}
-				Game(player);
+
+				if (hero.GetCoin() > player.GetHighScore())
+					player.SetHighScore(hero.GetCoin());
+				if (player.GetTimeHighScore() > gameTime|| player.GetTimeHighScore()<0)
+					player.SetTimeHighScore(gameTime);
+
+				//Game(player);
 			}
 		}
-		else {
-		window.close();
+		else { // Если игра пройдена (уровней больше нет)
+			window.close();
 			int choice = SwitchGameOver();
-				switch (choice) {
-				case 1: SetNullPlayer(player);
-					Game(player);
-					break;
-				case 2: 
-					return;
+			switch (choice) {
+			case 1: SetNullPlayer(player);
+				//Game(player);
+				break;
+			case 2:
+				return;
 
-				}
+			}
 		}
 	}
-	//////////////////////////////////////////////nononoon
 }
-int SwitchEsc(){
-	
-		bool flag = true;
-		RenderWindow pauseWindow(VideoMode(500, 300), "PAUSE");
-		Texture bgT;
-		bgT.loadFromFile("images/BirdsAndMountains.png");
-		Sprite bgS(bgT);
-		bgS.setPosition(0, 0);// 
+int SwitchEsc() {
 
-		Texture levelContinueT;
-		levelContinueT.loadFromFile("images/Buttons/LevelContinue.png");
-		Sprite levelContinueS(levelContinueT);
-		levelContinueS.setPosition(50, 50);///////////////////////////////////////////////////////////////////////////////=================================================================================
+	bool flag = true;
+	RenderWindow pauseWindow(VideoMode(500, 300), "PAUSE");
+	Texture bgT;
+	bgT.loadFromFile("images/BirdsAndMountains.png");
+	Sprite bgS(bgT);
+	bgS.setPosition(0, 0);// 
 
-		Texture levelCancelT;
-		levelCancelT.loadFromFile("images/Buttons/ExitToMenu.png");
-		Sprite levelCancelS(levelCancelT);
-		levelCancelS.setPosition(50, 175);
-		int menuNum;
-		while (flag) {
-			levelContinueS.setColor(Color::White);
-			levelCancelS.setColor(Color::White);
-			menuNum = PauseKeyCheck(pauseWindow);
-			switch (menuNum) {
-			case 1:
-				levelContinueS.setColor(Color::Green);
-				if (Mouse::isButtonPressed(Mouse::Left)) {
+	Texture levelContinueT;
+	levelContinueT.loadFromFile("images/Buttons/LevelContinue.png");
+	Sprite levelContinueS(levelContinueT);
+	levelContinueS.setPosition(50, 50);///////////////////////////////////////////////////////////////////////////////=================================================================================
+
+	Texture levelCancelT;
+	levelCancelT.loadFromFile("images/Buttons/ExitToMenu.png");
+	Sprite levelCancelS(levelCancelT);
+	levelCancelS.setPosition(50, 175);
+	int menuNum;
+	while (flag) {
+		levelContinueS.setColor(Color::White);
+		levelCancelS.setColor(Color::White);
+		menuNum = PauseKeyCheck(pauseWindow);
+		switch (menuNum) {
+		case 1:
+			levelContinueS.setColor(Color::Green);
+			if (Mouse::isButtonPressed(Mouse::Left)) {
 				/*	state = stay;
 					speed = 0;*/
-					return 1;
-				}
-				break;
-			case 2: levelCancelS.setColor(Color::Green);
-				if (Mouse::isButtonPressed(Mouse::Left))
-				{
-					return 2;
-				}
-
+				return 1;
 			}
-			pauseWindow.clear();
-			pauseWindow.draw(bgS);
-			pauseWindow.draw(levelContinueS);
-			pauseWindow.draw(levelCancelS);
-			pauseWindow.display();
-			//system("pause");								   //m_render->window().close();
-				//else if (Keyboard::isKeyPressed(Keyboard::Down))&& на лестнице {
-				/*	state = down;
-				}*/
-				//else if( ESC )ОТКРЫТЬ МЕНЮ 
-				//if (!isKeyP)
-			//system("pause");
+			break;
+		case 2: levelCancelS.setColor(Color::Green);
+			if (Mouse::isButtonPressed(Mouse::Left))
+			{
+				return 2;
+			}
 
 		}
+		pauseWindow.clear();
+		pauseWindow.draw(bgS);
+		pauseWindow.draw(levelContinueS);
+		pauseWindow.draw(levelCancelS);
+		pauseWindow.display();
+	}
 }
 int SwitchGameOver() {
 	RenderWindow window(VideoMode(800, 1000), "GAME OVER");
@@ -426,43 +433,38 @@ int SwitchGameOver() {
 	Texture startOverT;
 	startOverT.loadFromFile("images/Buttons/StartOver.png");
 	Sprite startOverS(startOverT);
-	startOverS.setPosition(200, 800);
+	startOverS.setPosition(200, 5);
 
 	Texture exitT;
 	exitT.loadFromFile("images/Buttons/ExitToMenu.png");
 	Sprite exitS(exitT);
-	exitS.setPosition(200, 919);
+	exitS.setPosition(200, 125);
 	int menuNum;
 	bool flag = true;
 	while (flag)
 	{
-
-		
 		menuNum = GameOverKeyCheck(window);
-			gameOver.setColor(Color::White);
-			startOverS.setColor(Color::White);
-			exitS.setColor(Color::White);
-			switch (menuNum){
-			
-			case 1: startOverS.setColor(Color::Green);
-				if (Mouse::isButtonPressed(Mouse::Left)) 
-					return 1;
-				break;
-			case 2: exitS.setColor(Color::Green);
-				if (Mouse::isButtonPressed(Mouse::Left)) {
-					return 2;
+		gameOver.setColor(Color::White);
+		startOverS.setColor(Color::White);
+		exitS.setColor(Color::White);
+		switch (menuNum) {
 
-				}
-				break;
-				
+		case 1: startOverS.setColor(Color::Green);
+			if (Mouse::isButtonPressed(Mouse::Left))
+				return 1;
+			break;
+		case 2: exitS.setColor(Color::Green);
+			if (Mouse::isButtonPressed(Mouse::Left)) {
+				return 2;
 			}
-			window.clear();
-			window.draw(gameOver);
-			window.draw(startOverS);
-			window.draw(exitS);
-			window.display();
+			break;
+		}
+		window.clear();
+		window.draw(gameOver);
+		window.draw(startOverS);
+		window.draw(exitS);
+		window.display();
 	}
-
 }
 void CurrentStatus(Text& text, int health, int gameTime, int coin) {
 
@@ -495,10 +497,10 @@ int PauseKeyCheck(RenderWindow& window) {
 }
 int GameOverKeyCheck(RenderWindow& window) {
 	int menuNum = 0;
-	if (IntRect(200,800 , 400, 80).contains(Mouse::getPosition(window))) {
+	if (IntRect(200, 5, 400, 80).contains(Mouse::getPosition(window))) {
 		menuNum = 1;
 	}
-	if (IntRect(200, 919, 400, 80).contains(Mouse::getPosition(window))) {
+	if (IntRect(200, 125, 400, 80).contains(Mouse::getPosition(window))) {
 		menuNum = 2;
 	}
 	return menuNum;
@@ -518,9 +520,9 @@ void LevelEnd(Text& text, int levelNum, int gameTime, int coin) {
 	coin_str << coin;
 	text.setString("LEVEL  " + level_str.str() + "  COMPLETED!!!" +
 		"\n GAME TIME " + min_str.str() + ':' + sec_str.str() +
-		"\n COINS " + coin_str.str()+"\n press SPACE to continue");
+		"\n COINS " + coin_str.str() + "\n press SPACE to continue");
 
-	text.setPosition(view.getCenter().x-300, view.getCenter().y-100);
+	text.setPosition(view.getCenter().x - 300, view.getCenter().y - 100);
 }
 void SetNullPlayer(Player& player) {// Обнуление всех достижений игрока
 	player.SetHighScore(0);
@@ -558,7 +560,8 @@ void Player::writeFilePlayers(string& file, vector <Player> vec_of_players)// С
 			<< vec_of_players[i].hash << " "
 			<< vec_of_players[i].salt << " "
 			<< vec_of_players[i].level << " "
-			<< vec_of_players[i].highScore;
+			<< vec_of_players[i].highScore << " "
+			<< vec_of_players[i].timeHighScore;
 
 		if (i < vec_of_players.size() - 1)
 			fout << endl;
@@ -575,8 +578,8 @@ void Player::writeEndFilePlayers(string& file, Player new_player)
 		<< new_player.hash << " "
 		<< new_player.salt << " "
 		<< new_player.level << " "
-		<< new_player.highScore;
-
+		<< new_player.highScore << " "
+		<< new_player.timeHighScore;
 	fadd.close();
 	return;
 }
@@ -598,11 +601,12 @@ void Player::readFilePlayers(string& file, vector <Player>& vec_of_players, Rend
 		temp.role = "admin";
 		temp.access = 1;
 		temp.highScore = 0;
+		temp.timeHighScore = -1;
 		temp.level = 1;
 		vec_of_players.push_back(temp);
 		cout << "\nРегистрация прошла \x1b[32mуспешно\x1b[35m ";
 		writeFilePlayers(file, vec_of_players);
-		adminMenu(file, vec_of_players);
+	//	adminMenu(file, vec_of_players, );
 		fin.close();
 	}
 	else
@@ -616,7 +620,8 @@ void Player::readFilePlayers(string& file, vector <Player>& vec_of_players, Rend
 				>> player_temp.hash
 				>> player_temp.salt
 				>> player_temp.level
-				>> player_temp.highScore;
+				>> player_temp.highScore
+				>> player_temp.timeHighScore;
 
 			vec_of_players.push_back(player_temp);
 		}
@@ -649,7 +654,7 @@ void Player::SignUp(string& file, vector <Player>& vec_of_players) {
 	system("pause>null");
 	writeEndFilePlayers(file, temp);
 }
-void Player::LogIn(string& file, vector <Player>& vec_of_players) {
+bool Player::LogIn(string& file, vector <Player>& vec_of_players) {
 	string nick, password, salt, hash;
 	for (int attempt = 2; attempt > -1; attempt--) {
 		system("cls");
@@ -683,18 +688,19 @@ void Player::LogIn(string& file, vector <Player>& vec_of_players) {
 				this->hash = vec_of_players[i].hash;
 				this->highScore = vec_of_players[i].highScore;
 				this->salt = vec_of_players[i].salt;
-			
-				return;
+
+				return true;
 			}
 			//ВЫЗОВ ИНТЕРФЕЙСА______________________________________ 
 		}
 		cout << "\n\t\x1b[31mНеверное имя пользователя или пароль\x1b[35m\n" <<
 			"\n\tКоличество оставшихся попыток: " << attempt << endl;
-		if(attempt!=0)
+		if (attempt != 0)
 			system("pause>null");
 	}
 	cout << "\n\tПопробуйте позже!\n";
 	system("pause>null");
+	return false;
 }
 void changePassword(string& file, vector <Player>& vec_of_players, int i) {
 
@@ -752,6 +758,7 @@ string createNewLogin(vector <Player> vec_of_players) {
 	int    i = 0;
 
 	while (flag == true) {
+		repeat = false;
 		system("cls");
 		cout << "\x1b[35mВведите никнейм: ";
 		cin.clear();
@@ -835,9 +842,10 @@ string enterPassword() {
 
 //----------------------ВЫВОД-----------------------------
 void MenuShowScore(vector<Player>& vec_of_players) {
-	
+
 	while (true) {
 		system("cls");
+		ScoreTableHead();
 		ShowScore(vec_of_players);
 		cout << "\n~~~~~~~~~~~~~~~~~~~\n" <<
 			" | 1 | Сортировка  |\n" <<
@@ -860,10 +868,10 @@ void ShowPlayersForAdmin(vector<Player>& vec_of_players) {
 	AdminTableHead();
 	for (int i = 0; i < vec_of_players.size(); i++) {
 		int id = i + 1;
-		cout << '|' << setw(2) << id << setw(2) <<"  |  " << vec_of_players[i].nick <<
+		cout << '|' << setw(2) << id << setw(2) << "  |  " << vec_of_players[i].nick <<
 			setw(23 - vec_of_players[i].nick.length()) << "|  " <<
 			vec_of_players[i].role << setw(15 - vec_of_players[i].role.length()) <<
-			 "|    " <<
+			"|    " <<
 			vec_of_players[i].access << "     |" << setw(5) <<
 			vec_of_players[i].level << setw(5) << '|' << setw(4) <<
 			vec_of_players[i].highScore << setw(11) << '|';
@@ -875,7 +883,7 @@ void ShowPlayersForAdmin(vector<Player>& vec_of_players) {
 
 }
 void ShowScore(vector<Player>& vec_of_players) {
-	ScoreTableHead();
+	
 	if (vec_of_players.size() < 1) {
 		cout << "\n\tNO PLAYERS";
 	}
@@ -884,11 +892,15 @@ void ShowScore(vector<Player>& vec_of_players) {
 			cout << "| " << i + 1 << setw(3) <<
 				" |" << vec_of_players[i].GetNick() << setw(23 - vec_of_players[i].GetNick().length()) <<
 				'|' << setw(7) << vec_of_players[i].GetLevel() << setw(8) << '|' << setw(10) <<
-				vec_of_players[i].GetHighScore() << setw(11) << '|';
+				vec_of_players[i].GetHighScore() << setw(11) << '|' << setw(8);
+			if (vec_of_players[i].GetTimeHighScore() < 0)
+				cout << "--";
+			else cout << vec_of_players[i].GetTimeHighScore();
+			cout<<setw(9) << '|';
 			if (i != vec_of_players.size() - 1)
-				cout << "\n|----|----------------------|--------------|--------------------|\n";
+				cout << "\n|----|----------------------|--------------|--------------------|----------------|\n";
 			else
-				cout << "\n=================================================================";
+				cout << "\n==================================================================================";
 
 		}
 	}
@@ -900,17 +912,18 @@ void AdminTableHead() {
 		"|====|======================+============+==========+=========+==============|\n";
 }
 void  ScoreTableHead() {
-	cout << "=================================================================" <<
-		"\n| ID |         NICK         |    LEVEL     |    HIGH SCORE      |\n" <<
-		"|====|======================+==============+====================|\n";
+	cout << "==================================================================================" <<
+		  "\n| ID |         NICK         |    LEVEL     |    HIGH SCORE      | THE BEST TIME  |\n" <<
+		    "|====|======================+==============+====================|=================\n";
 }
 
 //--------------------СОРТИРОВКА---------------------
 void SortPlayers(vector <Player> copy_vec) {
-	
+
 	while (true) {
 		system("cls");
-	//	ScoreTableHead();
+		//	ScoreTableHead();
+		ScoreTableHead();
 		ShowScore(copy_vec);
 		cout << "\n\t Sort by: \n\t\t1 -  NICK\n\t\t2 - LEVEL\n\t\t" <<
 			"3 - HIGH SCORE\n\t\t0 - cancel\n\t\t\t-> ";
@@ -954,7 +967,7 @@ bool DownSortByScore(Player a, Player b) {
 	return a.GetHighScore() > b.GetHighScore();
 }
 //--------------------ПОИСК---------------------
-void SearchPlayer(vector <Player>& vec_of_players) {
+void SearchPlayer(vector <Player> vec_of_players) {
 	while (true) {
 		system("cls");
 		/*userTableHead();
@@ -973,7 +986,7 @@ void SearchPlayer(vector <Player>& vec_of_players) {
 		}
 	}
 }
-void SearchByLevel(vector<Player>& vec_of_players) {
+void SearchByLevel(vector<Player> vec_of_players) {
 	cout << "\n Enter level: ";
 	int level = checkNumberPositive();
 	vector <Player> search_vec;
@@ -986,6 +999,7 @@ void SearchByLevel(vector<Player>& vec_of_players) {
 	}
 	if (counter != 0) {
 		//ScoreTableHead();
+		ScoreTableHead();
 		ShowScore(search_vec);
 		cout << counter << "\n players at all ";
 	}
@@ -994,15 +1008,74 @@ void SearchByLevel(vector<Player>& vec_of_players) {
 	return;
 
 }
-void SearchByNick(vector <Player>& vec_of_players) {
-	system("cls");
-	cout << "\n\t Enter nick : ";
-	vector <Player> search_vec;
-	int		strLength = 0;
+//void SearchByNick(vector <Player>& vec_of_players) {
+//	system("cls");
+//	cout << "\n\t Enter nick : ";
+//	vector <Player> search_vec;
+//	int		strLength = 0;
+//	string str;
+//	char   symbol;
+//	bool second_flag = true;
+//	while (second_flag) {
+//		bool flag = true;
+//		do
+//		{
+//			symbol = _getch();
+//
+//
+//			if (symbol == '\b') {//если нажали backspace
+//				if (str.size() != 0)//иначе стирать нечего
+//				{
+//					cout << '\b' << ' ' << '\b';
+//					str.erase(str.size() - 1);
+//
+//				}
+//				else continue;
+//			}
+//			else if (symbol == '\r') {
+//				if (strLength < 1)
+//					cout << " \n Empty input!\n Try again: ";
+//				else {
+//					str.push_back('\0');
+//					flag = false;
+//					second_flag = false;
+//				}
+//			}
+//
+//			else {//если любой другой символ, то помещаем его в строку 
+//				if ((symbol > 64 && symbol < 91) || (symbol > 96 && symbol < 123) || symbol == '_' || symbol == '-' || symbol == ' ') {// ASCII '0'= 48, '9'=57
+//					cout << symbol;
+//					str.push_back(symbol);
+//					strLength++;
+//					//flag = false;
+//				}
+//				//else NOTHING
+//			}
+//		} while (flag == true);
+//
+//		
+//		// (char*)&str[0];
+//		for (int i = 0; i < vec_of_players.size(); i++) {
+//			if (vec_of_players[i].GetNick().substr(0, str.size()) == str)
+//				search_vec.push_back(vec_of_players[i]);
+//		}
+//		//ScoreTableHead();
+//		ScoreTableHead();
+//		ShowScore(search_vec);
+//	}
+//
+//}
+void SearchByNick(vector<Player> vec_of_players) {
 	string str;
-	char   symbol;
-	bool second_flag = true;
+	int	   strLength = 0;
+	unsigned char   symbol;
+	bool   second_flag = true;
+
 	while (second_flag) {
+		vector <Player> search_vec;
+		system("cls");
+		cout << "\n\t Введите ник : " << str;
+		if (str.length() != 0) str.pop_back();
 		bool flag = true;
 		do
 		{
@@ -1014,13 +1087,13 @@ void SearchByNick(vector <Player>& vec_of_players) {
 				{
 					cout << '\b' << ' ' << '\b';
 					str.erase(str.size() - 1);
-
+					strLength--;
 				}
 				else continue;
 			}
 			else if (symbol == '\r') {
 				if (strLength < 1)
-					cout << " \n Empty input!\n Try again: ";
+					cout << " \n Пустой ввод!\n Попробуйте снова: ";
 				else {
 					flag = false;
 					second_flag = false;
@@ -1031,25 +1104,27 @@ void SearchByNick(vector <Player>& vec_of_players) {
 				if ((symbol > 64 && symbol < 91) || (symbol > 96 && symbol < 123) || symbol == '_' || symbol == '-' || symbol == ' ') {// ASCII '0'= 48, '9'=57
 					cout << symbol;
 					str.push_back(symbol);
-					//strLength++;
+					strLength++;
 					flag = false;
 				}
-				//else NOTHING
 			}
 		} while (flag == true);
 
 		str.push_back('\0');
-		// (char*)&str[0];
+		string s;
 		for (int i = 0; i < vec_of_players.size(); i++) {
-			if (vec_of_players[i].GetNick().substr(0, str.size()) == str)
-				search_vec.push_back(vec_of_players.at(i));
+			s = vec_of_players[i].GetNick().substr(0, str.length() - 1);
+			if (s == str.substr(0, strLength))
+				search_vec.push_back(vec_of_players[i]);
 		}
-		//ScoreTableHead();
+		cout << "\n";
+		ScoreTableHead();
 		ShowScore(search_vec);
+		system("pause>null");
 	}
 
 }
-void SearchByScore(vector <Player> vec_of_players) {
+void SearchByScore(vector<Player> vec_of_players) {
 	cout << "\n Enter search diapason: \n\tFrom : ";
 	double begin = checkDiapason(0, 10);
 	cout << "\n\tTo : ";
@@ -1065,6 +1140,7 @@ void SearchByScore(vector <Player> vec_of_players) {
 	}
 	if (counter != 0) {
 		//ScoreTableHead();
+		ScoreTableHead();
 		ShowScore(search_vec);
 		cout << counter << "\n players at all ";
 	}
@@ -1079,26 +1155,29 @@ int FindPlayerIndex(vector<Player> vec_of_players, string nick) {
 	}
 }
 //---------------------АДМИН---------------------
-void adminMenu(string& file, vector<Player>& vec_of_players) {// Передаем сам вектор и номер аккаунта
+void adminMenu(string& file, vector<Player>& vec_of_players, Player& player) {// Передаем сам вектор и номер аккаунта
 	while (true) {
 		system("pause>null");
 		system("cls");
 		//cin.clear();
 		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~\n" <<
-		       " | 1 | Работа с игроками |\n" <<
-			   " | 2 | Сменить пароль    |\n" <<
-			   " | 3 | ИГРА              |\n" <<
-			   " | 0 | Назад             |\n" <<
-			    "~~~~~~~~~~~~~~~~~~~~~~~~~\n  -> ";
+			" | 1 | Работа с игроками |\n" <<
+			" | 2 | Сменить пароль    |\n" <<
+			" | 3 | ИГРА              |\n" <<
+			" | 0 | Назад             |\n" <<
+			"~~~~~~~~~~~~~~~~~~~~~~~~~\n  -> ";
 		int   choice = checkDiapason(0, 3);
 		switch (choice) {
 		case 1: adminSystemWorkMenu(file, vec_of_players);
 			break;
 		case 2: changePassword(file, vec_of_players, 0);
 			break;
-		case 3: Game( vec_of_players[0]);
+		case 3: Game(player);
+			vec_of_players[0] = player;
 			break;
-		case 0:// ВЫХОД В ГЛАВНОЕ ОКОННОЕ МЕНЮ
+		case 0:
+	
+			// ВЫХОД В ГЛАВНОЕ ОКОННОЕ МЕНЮ
 			return;
 		}
 	}
@@ -1110,11 +1189,11 @@ void adminSystemWorkMenu(string& file, vector <Player>& vec_of_players) {
 		cin.clear();
 
 		cout << "~~~~~~~~~~~~~~~~~~~~~~~\n" <<
-			   " | 1 | Просмотр        |\n" <<
-			   " | 2 | Изменить доступ |\n"<<
-		       " | 3 | Удалить         |\n" <<
-			   " | 0 | Назад           |\n" <<
-			    "~~~~~~~~~~~~~~~~~~~~~~~\n\n  -> ";
+			" | 1 | Просмотр        |\n" <<
+			" | 2 | Изменить доступ |\n" <<
+			" | 3 | Удалить         |\n" <<
+			" | 0 | Назад           |\n" <<
+			"~~~~~~~~~~~~~~~~~~~~~~~\n\n  -> ";
 		int choice = checkDiapason(0, 3);
 		switch (choice) {
 		case 1: ShowPlayersForAdmin(vec_of_players);

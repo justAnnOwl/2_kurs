@@ -1,14 +1,14 @@
-#include "Entity.h"
+п»ї#include "Entity.h"
 #include "Map.h"
 
 Sprite Entity::GetSprite() {
 	return sprite;
 }
-FloatRect Entity::getEntityRect() {//ф-ция получения прямоугольника. его коорд,размеры (шир,высот).
-	return FloatRect(x, y, w, h);//эта ф-ция нужна для проверки столкновений 
+FloatRect Entity::getEntityRect() {//С„-С†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°. РµРіРѕ РєРѕРѕСЂРґ,СЂР°Р·РјРµСЂС‹ (С€РёСЂ,РІС‹СЃРѕС‚).
+	return FloatRect(x, y, w, h);//СЌС‚Р° С„-С†РёСЏ РЅСѓР¶РЅР° РґР»СЏ РїСЂРѕРІРµСЂРєРё СЃС‚РѕР»РєРЅРѕРІРµРЅРёР№ 
 }
 void Hero::KeyCheck()
-{// ДОПИСАТЬ ОСТАЛЬНЫЕ НАПРАВЛЕНИЯ
+{// Р”РћРџРРЎРђРўР¬ РћРЎРўРђР›Р¬РќР«Р• РќРђРџР РђР’Р›Р•РќРРЇ
 	if (Keyboard::isKeyPressed) {
 		if (Keyboard::isKeyPressed(Keyboard::Right)) {
 			state = right;
@@ -34,54 +34,52 @@ void Hero::KeyCheck()
 		else if (Keyboard::isKeyPressed(Keyboard::Down)) {
 			state = down;
 			dy = 0.1;
-			//переместить на землю
+			//РїРµСЂРµРјРµСЃС‚РёС‚СЊ РЅР° Р·РµРјР»СЋ
 			//isOnGround=true;
 		}
-		//else if (Keyboard::isKeyPressed(Keyboard::Escape))////////////////////////////////////////ВЫЗЫВАЕТ ИСКЛЮЧЕНИЯ!!!!!!!!!!!
-		
+		//else if (Keyboard::isKeyPressed(Keyboard::Escape))////////////////////////////////////////Р’Р«Р—Р«Р’РђР•Рў РРЎРљР›Р®Р§Р•РќРРЇ!!!!!!!!!!!
+
 		else {
 			state = stay;
 			speed = 0;
 		}
 	}
 }
-void Hero:: CheckCollisionWithMap(float Dx, float Dy, string* TileMap ) {
+void Hero::CheckCollisionWithMap(float Dx, float Dy, string* TileMap) {
 	//Level lvl(levelNum);
-	for (int i = y / 32; i < (y + h) / 32; i++) { // Проход по элементам карты
+	for (int i = y / 32; i < (y + h) / 32; i++) { // РџСЂРѕС…РѕРґ РїРѕ СЌР»РµРјРµРЅС‚Р°Рј РєР°СЂС‚С‹
 		for (int j = x / 32; j < (x + w) / 32; j++) {
 			if (TileMap[i][j] == '0') {
-				if (Dy > 0) {//по Y вниз=>идем в пол(стоим на месте) или падаем. В этот момент надо вытолкнуть персонажа и поставить его на землю, при этом говорим что мы на земле тем самым снова можем прыгать
+				if (Dy > 0) {//РїРѕ Y РІРЅРёР·=>РёРґРµРј РІ РїРѕР»(СЃС‚РѕРёРј РЅР° РјРµСЃС‚Рµ) РёР»Рё РїР°РґР°РµРј. Р’ СЌС‚РѕС‚ РјРѕРјРµРЅС‚ РЅР°РґРѕ РІС‹С‚РѕР»РєРЅСѓС‚СЊ РїРµСЂСЃРѕРЅР°Р¶Р° Рё РїРѕСЃС‚Р°РІРёС‚СЊ РµРіРѕ РЅР° Р·РµРјР»СЋ, РїСЂРё СЌС‚РѕРј РіРѕРІРѕСЂРёРј С‡С‚Рѕ РјС‹ РЅР° Р·РµРјР»Рµ С‚РµРј СЃР°РјС‹Рј СЃРЅРѕРІР° РјРѕР¶РµРј РїСЂС‹РіР°С‚СЊ
 					y = i * 32 - h;
 					dy = 0;
 					isOnGround = true;
 				}
-				if (Dy < 0) {//столкновение с верхними краями карты
-					y = i * 32+32;
+				if (Dy < 0) {//СЃС‚РѕР»РєРЅРѕРІРµРЅРёРµ СЃ РІРµСЂС…РЅРёРјРё РєСЂР°СЏРјРё РєР°СЂС‚С‹
+					y = i * 32 + 32;
 					dy = 0;
 				}
-				if (Dx > 0) {//с правым краем карты
+				if (Dx > 0) {//СЃ РїСЂР°РІС‹Рј РєСЂР°РµРј РєР°СЂС‚С‹
 					x = j * 32 - w;
 				}
-				if (Dx < 0) {// с левым краем карты
-					x = j * 32+32 ;
+				if (Dx < 0) {// СЃ Р»РµРІС‹Рј РєСЂР°РµРј РєР°СЂС‚С‹
+					x = j * 32 + 32;
 					dx = 0;
 				}
 			}
-			 if (TileMap[i][j] == 'c') {
+			if (TileMap[i][j] == 'c') {
 				coin++;
 				TileMap[i][j] = ' ';
-			 }
+			}
 		}
 	}
 }
 
-//bool IsSolid() {
-//	return TileMap solid or no  И ПРЕДАТЬ В О ВЬЮ ДВИЖЕНИЯ КАРТЫ
-//}
+
 void Hero::Update(float time, string* TileMap) {
 	dx = 0;
 	KeyCheck();
-	switch (state) {// ДОПИСАТЬ JUMP И ДР
+	switch (state) {// Р”РћРџРРЎРђРўР¬ JUMP Р Р”Р 
 	case right: dx = speed;
 		break;
 	case left: dx = -speed;
@@ -90,32 +88,49 @@ void Hero::Update(float time, string* TileMap) {
 		break;
 	case down: dx = 0;
 		break;
-	case stay: 		
+	case stay:
 		break;
 	}
 	x += dx * time;
-	CheckCollisionWithMap(dx, 0, TileMap);// Обработка столкновений по Х
+	CheckCollisionWithMap(dx, 0, TileMap);// РћР±СЂР°Р±РѕС‚РєР° СЃС‚РѕР»РєРЅРѕРІРµРЅРёР№ РїРѕ РҐ
 	y += dy * time;
-	CheckCollisionWithMap(0, dy, TileMap);// Обработка столкновений по Y
+	CheckCollisionWithMap(0, dy, TileMap);// РћР±СЂР°Р±РѕС‚РєР° СЃС‚РѕР»РєРЅРѕРІРµРЅРёР№ РїРѕ Y
 	sprite.setPosition(x, y);
 	if (health < 1) {
 		isAlive = false;
-		//ВЫХОД ИЗ УРОВНЯ
+		//Р’Р«РҐРћР” РР— РЈР РћР’РќРЇ
 	}
 	if (!isMove) speed = 0;
-	//setPlayerCoordinateForView(x, y); //НАПИСАТЬ VIEW!!!
-	if (isAlive) {
-		//setPlayerCoordinateForView(x, y);
-	}
 	dy += 0.0015 * time;
 }
-//void Enemy:: Update(float time) {
-//	if (name == "Enemy") {
-//		//moveTimer += time;if (moveTimer>3000){ dx *= -1; moveTimer = 0; }
-//		//меняет направление примерно каждые 3 сек
-//		CheckCollisionWithMap(dx, 0);
-//		x += dx * time;
-//		sprite.setPosition(x + w / 2, y + h / 2);
-//		//if (health <= 0) { life = false; }
-//	}
-//}
+
+void Enemy::CheckCollisionWithMap(float Dx, float Dy, string* TileMap) {
+	for (int i = y / 32; i < (y + h) / 32; i++)//РїСЂРѕС…РѕРґРёРјСЃСЏ РїРѕ СЌР»РµРјРµРЅС‚Р°Рј РєР°СЂС‚С‹
+		for (int j = x / 32; j < (x + w) / 32; j++)
+		{
+			if (TileMap[i][j] == '0')//РµСЃР»Рё СЌР»РµРјРµРЅС‚ РЅР°С€ С‚Р°Р№Р»РёРє Р·РµРјР»Рё, С‚Рѕ
+			{
+				if (Dy > 0) { y = i * 32. - h; }// РџРѕ Y РІРЅРёР·
+				if (Dy < 0) { y = i * 32. + 32.; }// РЎС‚РѕР»РєРЅРѕРІРµРЅРёРµ СЃ РІРµСЂС…РЅРёРјРё РєСЂР°СЏРјРё РєР°СЂС‚С‹					
+				if (Dx > 0) {
+					x = j * 32. - w;
+					dx = -0.1;
+					sprite.scale(-1, 1);
+				}//СЃ РїСЂР°РІС‹Рј РєСЂР°РµРј РєР°СЂС‚С‹
+				if (Dx < 0) {  // РЎ Р»РµРІС‹Рј РєСЂР°РµРј
+					x = j * 32. + 32;
+					dx = 0.1;
+					sprite.scale(-1, 1);
+				}
+
+			}
+		}
+}
+void Enemy::Update(float time, string* TileMap) {
+	CheckCollisionWithMap(dx, 0, TileMap);
+	x += dx * time / 1.1;
+	sprite.setPosition(x + w / 2., y + h / 2.);
+	if (health <= 0) {
+		isAlive = false;
+	}
+}
