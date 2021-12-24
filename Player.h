@@ -1,12 +1,13 @@
 #pragma once
 #include <iostream>
 #include <fstream>
-#include <vector> 
 #include <iterator>
 #include <algorithm>
 #include <conio.h>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "Vector.h"
+#include "Entity.h"
 using namespace std;
 using namespace sf;
 

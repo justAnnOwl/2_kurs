@@ -1,7 +1,6 @@
 ﻿#include "Player.h"
 #include "Button.h"
 #include "Textbox.h"
-#include "Entity.h"
 #include "HashAndSalt.h"
 #include "Checking.h"
 #include "Map.h"

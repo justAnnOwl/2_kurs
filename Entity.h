@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <sstream>
-#include <vector>
 #include <list>
 
 
@@ -11,7 +10,7 @@ using namespace sf;
 using namespace std;
 class Entity {
 protected:
-	String name;
+	string name;
 	Texture texture;
 	Sprite sprite;
 
@@ -34,7 +33,7 @@ public:
 	bool isAlive,
 		isMove,
 		isOnGround;
-	Entity(Image& image, String Name, float X, float Y, int W, int H) {
+	Entity(Image& image, string Name, float X, float Y, int W, int H) {
 		x = X; y = Y; w = W; h = H;
 		name = Name;
 		moveTimer = 0;
@@ -70,7 +69,7 @@ public:
 
 	enum { left, right, up, down, jump, climb, stay } state;
 	
-	Hero(Image& image, String Name, float X, float Y, int W, int H) : Entity(image, Name, X, Y, W, H) {
+	Hero(Image& image, string Name, float X, float Y, int W, int H) : Entity(image, Name, X, Y, W, H) {
 		if (name == "Hero") {
 			sprite.setTextureRect(IntRect(0, 0, w, h));
 			sprite.setOrigin(w/2, h/2);
