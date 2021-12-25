@@ -1,7 +1,7 @@
-#include <SFML/Graphics.hpp>
+
 #include <iostream>
 #include <sstream>
-#include <vector>
+//#include <_vector>
 #include <iomanip>
 #include <list>
 #include "Entity.h"
@@ -9,12 +9,13 @@
 #include "Player.h"
 #include "Checking.h"
 #include <windows.h>
+#include <SFML/Graphics.hpp>
 using namespace std;
 using namespace sf;
 
 
 
-void  Menu(string& file,RenderWindow& window, vector<Player>& vec_of_players);
+void  Menu(string& file,RenderWindow& window, _vector<Player>& vec_of_players);
 
 
 
@@ -25,7 +26,7 @@ int main() {
 
 	setlocale(LC_ALL, "Rus");
 	Player player;
-	vector<Player> vec_of_players;
+	_vector<Player> vec_of_players;
 	 string file = "File_of_players.txt";
 	RenderWindow window(VideoMode(1700, 900), "THE Adventures");
 	player.readFilePlayers(file, vec_of_players, window);	
@@ -42,7 +43,7 @@ int main() {
 
 
 
-void Menu(string& file, RenderWindow& window, vector<Player>& vec_of_players) {
+void Menu(string& file, RenderWindow& window, _vector<Player>& vec_of_players) {
 	//string file = "File_of_players";
 	Texture menuTextureNG, menuTextureC, menuTextureS, menuTextureE, menuBackground;
 	menuTextureNG.loadFromFile("images/Buttons/NEWGAME.png");

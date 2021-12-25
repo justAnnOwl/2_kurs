@@ -10,7 +10,7 @@
 using namespace std;
 ///////////////////////СДЕЛАТЬ ЗАКРЫТИЕ УРОВНЯ И ЗАПИСЬ ИГРОКА В ВЕКТОР, РАЗОБРАТЬСЯ С ЕСК, КООРДИНАТЫ /54
 ///ОКНО ЕСК
-bool Player::NewGame(vector<Player>& vec_of_players, Player& player) {
+bool Player::NewGame(_vector<Player>& vec_of_players, Player& player) {
 
 	RenderWindow windowNick(VideoMode(800, 300), "NICK INPUT");// но размер 96
 	Texture bgTexture;
@@ -122,7 +122,7 @@ bool Player::NewGame(vector<Player>& vec_of_players, Player& player) {
 
 
 }
-void Player::ChoosePlayer(vector<Player>& vec_of_players, Player& player)
+void Player::ChoosePlayer(_vector<Player>& vec_of_players, Player& player)
 
 {
 	int vecSize = vec_of_players.size();
@@ -150,10 +150,10 @@ void Player::ChoosePlayer(vector<Player>& vec_of_players, Player& player)
 	//upLineText.setPosition(40, 0);//задаем позицию текста, отступая от центра камеры
 
 
-	vector<Text> text_vec;
+	_vector<Text> text_vec;
 	Texture textureButton;
 	textureButton.loadFromFile("images/Buttons/NICK.png");
-	vector<Sprite> spriteButton;
+	_vector<Sprite> spriteButton;
 	windowChoice.draw(upLineText);
 	for (int i = 0; i < vecSize; i++) {
 		spriteButton[i].setPosition(20, i * 48 + 48);
@@ -203,7 +203,7 @@ void Player::ChoosePlayer(vector<Player>& vec_of_players, Player& player)
 	windowChoice.close();
 	///
 }
-void UserMenu(string& file, vector<Player>& vec_of_players, Player& player) {
+void UserMenu(string& file, _vector<Player>& vec_of_players, Player& player) {
 	int i = FindPlayerIndex(vec_of_players, player.GetNick());
 	while (true) {
 		system("pause>null");
@@ -355,7 +355,7 @@ void Game(Player& player) {
 
 				if (hero.GetCoin() > player.GetHighScore())
 					player.SetHighScore(hero.GetCoin());
-				if (player.GetTimeHighScore() > gameTime|| player.GetTimeHighScore()<0)
+				if (player.GetTimeHighScore() > gameTime || player.GetTimeHighScore() < 0)
 					player.SetTimeHighScore(gameTime);
 
 				//Game(player);
@@ -548,7 +548,7 @@ string* ChangeLevelBecauseOfEnd(string* TileMap, int hight, int width) {// ФУ�
 	return TileMap;
 }
 //-----------------------ФАЙЛЫ-----------------------
-void Player::writeFilePlayers(string& file, vector <Player> vec_of_players)// Создание файла Players
+void Player::writeFilePlayers(string& file, _vector <Player> vec_of_players)// Создание файла Players
 {
 	ofstream fout(file, ios::out);
 	for (int i = 0; i < vec_of_players.size(); i++)
@@ -582,7 +582,7 @@ void Player::writeEndFilePlayers(string& file, Player new_player)
 	fadd.close();
 	return;
 }
-void Player::readFilePlayers(string& file, vector <Player>& vec_of_players, RenderWindow& window)
+void Player::readFilePlayers(string& file, _vector <Player>& vec_of_players, RenderWindow& window)
 {/////////////////////НЕ ПОДСВЕЧИАТЬ ПРОДОЛЖИТЬ ИГРУ
 	ifstream fin(file, ios::in);
 	///////////////////НУЖЕН ЛИ ПАРОЛЬ
@@ -605,7 +605,7 @@ void Player::readFilePlayers(string& file, vector <Player>& vec_of_players, Rend
 		vec_of_players.push_back(temp);
 		cout << "\nРегистрация прошла \x1b[32mуспешно\x1b[35m ";
 		writeFilePlayers(file, vec_of_players);
-	//	adminMenu(file, vec_of_players, );
+		//	adminMenu(file, vec_of_players, );
 		fin.close();
 	}
 	else
@@ -629,13 +629,13 @@ void Player::readFilePlayers(string& file, vector <Player>& vec_of_players, Rend
 	}
 
 }
-void ChangeVector(vector<Player>& vec_of_players, Player& player) {
+void ChangeVector(_vector<Player>& vec_of_players, Player& player) {
 	int i = FindPlayerIndex(vec_of_players, player.GetNick());
 	vec_of_players[i] = player;
 }
 
 //---------------------АККАУНТЫ-----------------------
-void Player::SignUp(string& file, vector <Player>& vec_of_players) {
+void Player::SignUp(string& file, _vector <Player>& vec_of_players) {
 	string  nick, password, salt, hash_pass_with_salt;
 	Player temp;
 
@@ -653,7 +653,7 @@ void Player::SignUp(string& file, vector <Player>& vec_of_players) {
 	system("pause>null");
 	writeEndFilePlayers(file, temp);
 }
-bool Player::LogIn(string& file, vector <Player>& vec_of_players) {
+bool Player::LogIn(string& file, _vector <Player>& vec_of_players) {
 	string nick, password, salt, hash;
 	for (int attempt = 2; attempt > -1; attempt--) {
 		system("cls");
@@ -701,7 +701,7 @@ bool Player::LogIn(string& file, vector <Player>& vec_of_players) {
 	system("pause>null");
 	return false;
 }
-void changePassword(string& file, vector <Player>& vec_of_players, int i) {
+void changePassword(string& file, _vector <Player>& vec_of_players, int i) {
 
 	for (int attempt = 3; attempt > 0; attempt--) {
 		system("cls");
@@ -751,7 +751,7 @@ string createNewPassword() {//не менее 4 символов
 	}
 	return password;
 }
-string createNewLogin(vector <Player> vec_of_players) {
+string createNewLogin(_vector <Player> vec_of_players) {
 	string nick;
 	bool   flag = true, repeat = false;
 	int    i = 0;
@@ -777,7 +777,7 @@ string createNewLogin(vector <Player> vec_of_players) {
 	return nick;
 }
 string enterPassword() {
-	vector <char> password;
+	_vector <char> password;
 	string str;
 	char   symbol;
 	bool flag = true;
@@ -815,7 +815,7 @@ string enterPassword() {
 	str = (char*)&password[0];
 	return str;
 }
-//void deletePlayer(vector <Player>& vec_of_accounts) {
+//void deletePlayer(_vector <Player>& vec_of_accounts) {
 //	while (true) {
 //		system("cls");
 //		cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ УДАЛЕНИЕ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
@@ -825,7 +825,7 @@ string enterPassword() {
 //		number--;
 //		if (number == 0) cout << "\n\t\n\x1b[31mНельзя удалить главного администратора из системы!\x1b[35m\n";
 //		else {
-//			vector <Account> temp = vec_of_accounts;
+//			_vector <Account> temp = vec_of_accounts;
 //			temp.erase(temp.begin() + number);
 //			system("cls");
 //			showAccounts(temp);
@@ -840,7 +840,7 @@ string enterPassword() {
 //}
 
 //----------------------ВЫВОД-----------------------------
-void MenuShowScore(vector<Player>& vec_of_players) {
+void MenuShowScore(_vector<Player>& vec_of_players) {
 
 	while (true) {
 		system("cls");
@@ -862,7 +862,7 @@ void MenuShowScore(vector<Player>& vec_of_players) {
 		}
 	}
 }
-void ShowPlayersForAdmin(vector<Player>& vec_of_players) {
+void ShowPlayersForAdmin(_vector<Player>& vec_of_players) {
 	//nick
 	AdminTableHead();
 	for (int i = 0; i < vec_of_players.size(); i++) {
@@ -881,8 +881,8 @@ void ShowPlayersForAdmin(vector<Player>& vec_of_players) {
 	}
 
 }
-void ShowScore(vector<Player>& vec_of_players) {
-	
+void ShowScore(_vector<Player>& vec_of_players) {
+
 	if (vec_of_players.size() < 1) {
 		cout << "\n\tNO PLAYERS";
 	}
@@ -895,7 +895,7 @@ void ShowScore(vector<Player>& vec_of_players) {
 			if (vec_of_players[i].GetTimeHighScore() < 0)
 				cout << "--";
 			else cout << vec_of_players[i].GetTimeHighScore();
-			cout<<setw(9) << '|';
+			cout << setw(9) << '|';
 			if (i != vec_of_players.size() - 1)
 				cout << "\n|----|----------------------|--------------|--------------------|----------------|\n";
 			else
@@ -912,12 +912,12 @@ void AdminTableHead() {
 }
 void  ScoreTableHead() {
 	cout << "==================================================================================" <<
-		  "\n| ID |         NICK         |    LEVEL     |    HIGH SCORE      | THE BEST TIME  |\n" <<
-		    "|====|======================+==============+====================|=================\n";
+		"\n| ID |         NICK         |    LEVEL     |    HIGH SCORE      | THE BEST TIME  |\n" <<
+		"|====|======================+==============+====================|=================\n";
 }
 
 //--------------------СОРТИРОВКА---------------------
-void SortPlayers(vector <Player> copy_vec) {
+void SortPlayers(_vector <Player> copy_vec) {
 
 	while (true) {
 		system("cls");
@@ -966,7 +966,7 @@ bool DownSortByScore(Player a, Player b) {
 	return a.GetHighScore() > b.GetHighScore();
 }
 //--------------------ПОИСК---------------------
-void SearchPlayer(vector <Player> vec_of_players) {
+void SearchPlayer(_vector <Player> vec_of_players) {
 	while (true) {
 		system("cls");
 		/*userTableHead();
@@ -985,10 +985,10 @@ void SearchPlayer(vector <Player> vec_of_players) {
 		}
 	}
 }
-void SearchByLevel(vector<Player> vec_of_players) {
+void SearchByLevel(_vector<Player> vec_of_players) {
 	cout << "\n Enter level: ";
 	int level = checkNumberPositive();
-	vector <Player> search_vec;
+	_vector <Player> search_vec;
 	int counter = 0;
 	for (int i = 0; i < vec_of_players.size(); i++) {
 		if (vec_of_players[i].GetLevel() == level) {
@@ -1007,10 +1007,10 @@ void SearchByLevel(vector<Player> vec_of_players) {
 	return;
 
 }
-//void SearchByNick(vector <Player>& vec_of_players) {
+//void SearchByNick(_vector <Player>& vec_of_players) {
 //	system("cls");
 //	cout << "\n\t Enter nick : ";
-//	vector <Player> search_vec;
+//	_vector <Player> search_vec;
 //	int		strLength = 0;
 //	string str;
 //	char   symbol;
@@ -1064,14 +1064,14 @@ void SearchByLevel(vector<Player> vec_of_players) {
 //	}
 //
 //}
-void SearchByNick(vector<Player> vec_of_players) {
+void SearchByNick(_vector<Player> vec_of_players) {
 	string str;
 	int	   strLength = 0;
 	unsigned char   symbol;
 	bool   second_flag = true;
 
 	while (second_flag) {
-		vector <Player> search_vec;
+		_vector <Player> search_vec;
 		system("cls");
 		cout << "\n\t Введите ник : " << str;
 		if (str.length() != 0) str.pop_back();
@@ -1123,12 +1123,12 @@ void SearchByNick(vector<Player> vec_of_players) {
 	}
 
 }
-void SearchByScore(vector<Player> vec_of_players) {
+void SearchByScore(_vector<Player> vec_of_players) {
 	cout << "\n Enter search diapason: \n\tFrom : ";
 	double begin = checkDiapason(0, 10);
 	cout << "\n\tTo : ";
 	double end = checkDiapason(0, 10);
-	vector <Player> search_vec;
+	_vector <Player> search_vec;
 	int counter = 0;
 	for (int i = 0; i < vec_of_players.size(); i++) {
 		if (vec_of_players[i].GetHighScore() >= begin &&
@@ -1147,14 +1147,14 @@ void SearchByScore(vector<Player> vec_of_players) {
 	system("pause>null");
 	return;
 }
-int FindPlayerIndex(vector<Player> vec_of_players, string nick) {
+int FindPlayerIndex(_vector<Player> vec_of_players, string nick) {
 	for (int i = 0; i < vec_of_players.size(); i++) {
 		if (nick == vec_of_players[i].GetNick())
 			return i;
 	}
 }
 //---------------------АДМИН---------------------
-void adminMenu(string& file, vector<Player>& vec_of_players, Player& player) {// Передаем сам вектор и номер аккаунта
+void adminMenu(string& file, _vector<Player>& vec_of_players, Player& player) {// Передаем сам вектор и номер аккаунта
 	while (true) {
 		system("pause>null");
 		system("cls");
@@ -1175,13 +1175,13 @@ void adminMenu(string& file, vector<Player>& vec_of_players, Player& player) {//
 			vec_of_players[0] = player;
 			break;
 		case 0:
-	
+
 			// ВЫХОД В ГЛАВНОЕ ОКОННОЕ МЕНЮ
 			return;
 		}
 	}
 }
-void adminSystemWorkMenu(string& file, vector <Player>& vec_of_players) {
+void adminSystemWorkMenu(string& file, _vector <Player>& vec_of_players) {
 	while (true) {
 		system("pause>nul");
 		system("cls");
@@ -1206,7 +1206,7 @@ void adminSystemWorkMenu(string& file, vector <Player>& vec_of_players) {
 
 	}
 }
-void ChangeAccess(string& file, vector <Player>& vec_of_players) {
+void ChangeAccess(string& file, _vector <Player>& vec_of_players) {
 	while (true) {
 		system("cls");
 		ShowPlayersForAdmin(vec_of_players);
@@ -1234,7 +1234,7 @@ void ChangeAccess(string& file, vector <Player>& vec_of_players) {
 int changeOpposite(int num) {// Если передаваемое значение = 0, то меняет на 1 и наоборот
 	return (num == 0) ? 1 : 0;
 }
-void DeletePlayer(vector <Player>& vec_of_players) {
+void DeletePlayer(_vector <Player>& vec_of_players) {
 	//showAccounts(vec_of_accounts);
 	while (true) {
 		system("cls");
@@ -1246,14 +1246,14 @@ void DeletePlayer(vector <Player>& vec_of_players) {
 		number--;
 		if (number == 0) cout << "\n\t\n\x1b[31mНельзя удалить главного администратора из системы!\x1b[35m\n";
 		else {
-			vector <Player> temp = vec_of_players;
-			temp.erase(temp.begin() + number);//////////////////////  А ТОЧНО ЛИ НУЖНОЕ УДАЛЯЕТ??????????????????
+			_vector <Player> temp = vec_of_players;
+			temp.removeThisIndex( number);//////////////////////  А ТОЧНО ЛИ НУЖНОЕ УДАЛЯЕТ??????????????????
 			system("cls");
 			ShowPlayersForAdmin(temp);
 			cout << "\n\n\tСохранить изменения?\n\t 1 - да\n\t 0 - нет\n\t ->";
 			bool yesOrNo = isTrue();
-			if (yesOrNo) vec_of_players.erase(vec_of_players.begin() + number);
-			cout << "\n\n\tПродолжить?\n\t 1 - да\n\t 2 - вернуться в меню\n\t ->";
+			if (yesOrNo) vec_of_players.removeThisIndex( number);
+			cout << "\n\n\tПродолжить?\n\t 1 - да\n\t 0 - вернуться в меню\n\t ->";
 			yesOrNo = isTrue();
 			if (yesOrNo == 0) return;
 		}
@@ -1266,7 +1266,7 @@ bool isTrue() {
 	if (choice == 1) return true;
 	else return false;
 }
-bool  isNickDuplicate(vector<Player>& vec_of_players, string nick) {
+bool  isNickDuplicate(_vector<Player>& vec_of_players, string nick) {
 	for (int i = 0; i < vec_of_players.size(); i++) {
 		if (findDuplicate(vec_of_players[i].GetNick(), nick))
 			return true;

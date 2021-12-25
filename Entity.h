@@ -1,9 +1,10 @@
-#pragma once
+п»ї#pragma once
 #include <SFML/Graphics.hpp>
 
 #include <iostream>
 #include <sstream>
-#include <list>
+
+//#include <list>
 
 
 using namespace sf;
@@ -37,15 +38,15 @@ public:
 		x = X; y = Y; w = W; h = H;
 		name = Name;
 		moveTimer = 0;
-		speed = 0; 
+		speed = 0;
 		dir = 0; dx = 0; dy = 0;
 		isAlive = true;
 		isOnGround = false;
 		isMove = false;
-		texture.loadFromImage(image); // Загрузка текстуры из картинки
-		sprite.setTexture(texture); // Установка текстуры спрайту
-		 // Установка первоначального положения объекта 
-		///////////!!!!!!!!!!!!!! не по центру. а где-то в начале нужно посчитать по карте
+		texture.loadFromImage(image); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		sprite.setTexture(texture); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		 // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+		///////////!!!!!!!!!!!!!! пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ. пїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	}
 	double GetX() {
 		return x;
@@ -68,18 +69,18 @@ class Hero : public Entity {
 public:
 
 	enum { left, right, up, down, jump, climb, stay } state;
-	
+
 	Hero(Image& image, string Name, float X, float Y, int W, int H) : Entity(image, Name, X, Y, W, H) {
 		if (name == "Hero") {
 			sprite.setTextureRect(IntRect(0, 0, w, h));
-			sprite.setOrigin(w/2, h/2);
+			sprite.setOrigin(w / 2, h / 2);
 			coin = 0;
 			health = 3;
 		}
 	}
 	void KeyCheck();
 	void CheckCollisionWithMap(float Dx, float Dy, string* TileMap);
-	void Update(float time, string*	 TileMap);
+	void Update(float time, string* TileMap);
 	int GetCoin() {
 		return coin;
 	}
@@ -89,12 +90,11 @@ public:
 };
 class Enemy : public Entity {
 public:
-	Enemy(Image& image, string Name, float X, float Y, int W, int H) :Entity(image, Name ,X, Y, W, H) {
-			sprite.setTextureRect(IntRect(0, 0, w, h));
-			sprite.setOrigin(w , h);
-			dx = 0.05;
+	Enemy(Image& image, string Name, float X, float Y, int W, int H) :Entity(image, Name, X, Y, W, H) {
+		sprite.setTextureRect(IntRect(0, 0, w, h));
+		sprite.setOrigin(w, h);
+		dx = 0.05;
 	}
 	void CheckCollisionWithMap(float Dx, float Dy, string* TileMap);
 	void Update(float time, string* TileMap);
 };
-

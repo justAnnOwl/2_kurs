@@ -1,12 +1,12 @@
-#pragma once
+ï»¿#pragma once
 #include <iostream>
 #include <fstream>
-#include <iterator>
-#include <algorithm>
+//#include <iterator>
+//#include <algorithm>
 #include <conio.h>
 #include <string>
-#include <SFML/Graphics.hpp>
 #include "Vector.h"
+#include <SFML/Graphics.hpp>
 #include "Entity.h"
 using namespace std;
 using namespace sf;
@@ -69,67 +69,66 @@ public:
 	int GetAccess() {
 		return access;
 	}
-	
-	  void writeFilePlayers(string&, vector<Player>);
-	  void writeEndFilePlayers(string&, Player);
-	  void readFilePlayers(string&, vector<Player>&, RenderWindow& window);
-	  void ChoosePlayer(vector<Player>& vec_of_players, Player& player);
-	  bool NewGame(vector<Player>& vec_of_players, Player& player);
-	  bool LogIn(string& file, vector <Player>& vec_of_players);
-	  void SignUp(string& file, vector <Player>& vec_of_players);
-	 
-	  friend void ShowPlayersForAdmin(vector<Player>& vec_of_players);
-	  friend void ShowScore(vector<Player>& vec_of_players);
-	  friend void changePassword(string& file, vector <Player>& vec_of_players, int i);
-	  friend  void changePassword(string& file, vector <Player>& vec_of_players, int i);
-	
+
+	void writeFilePlayers(string&, _vector<Player>);
+	void writeEndFilePlayers(string&, Player);
+	void readFilePlayers(string&, _vector<Player>&, RenderWindow& window);
+	void ChoosePlayer(_vector<Player>& vec_of_players, Player& player);
+	bool NewGame(_vector<Player>& vec_of_players, Player& player);
+	bool LogIn(string& file, _vector <Player>& vec_of_players);
+	void SignUp(string& file, _vector <Player>& vec_of_players);
+
+	friend void ShowPlayersForAdmin(_vector<Player>& vec_of_players);
+	friend void ShowScore(_vector<Player>& vec_of_players);
+	friend void changePassword(string& file, _vector <Player>& vec_of_players, int i);
+	friend  void changePassword(string& file, _vector <Player>& vec_of_players, int i);
+
 };
 
-//------------------ÈÃÐÀ------------------------
-void Game( Player& player);
+//------------------ï¿½ï¿½ï¿½ï¿½------------------------
+void Game(Player& player);
 void SetHeroCoordinateForView(float x, float y);
 
 string* ChangeLevelBecauseOfEnd(string* TileMap, int hight, int width);
-void ChangeVector(vector<Player>& vec_of_players, Player& player);
+void ChangeVector(_vector<Player>& vec_of_players, Player& player);
 string createNewPassword();
 string enterPassword();
-string createNewLogin(vector <Player> vec_of_players);
-void UserMenu(string& file, vector<Player>& vec_of_players, Player& player);
+string createNewLogin(_vector <Player> vec_of_players);
+void UserMenu(string& file, _vector<Player>& vec_of_players, Player& player);
 int PauseKeyCheck(RenderWindow& window);
 int GameOverKeyCheck(RenderWindow& window);
 void SetNullPlayer(Player& player);
-//----------------------ÂÛÂÎÄ-----------------------------
+//----------------------ï¿½ï¿½ï¿½ï¿½ï¿½-----------------------------
 void CurrentStatus(Text& text, int health, int gameTime, int coin);
 void LevelEnd(Text& text, int levelNum, int gameTime, int coin);
-void MenuShowScore(vector<Player>& vec_of_players);
-void ShowPlayersForAdmin(vector<Player>& vec_of_players);
-void ShowScore(vector<Player>& vec_of_players);
+void MenuShowScore(_vector<Player>& vec_of_players);
+void ShowPlayersForAdmin(_vector<Player>& vec_of_players);
+void ShowScore(_vector<Player>& vec_of_players);
 void AdminTableHead();
 void  ScoreTableHead();
 int SwitchEsc();
 int SwitchGameOver();
-//--------------------ÑÎÐÒÈÐÎÂÊÀ---------------------
-void SortPlayers(vector <Player> vec_of_players);
+//--------------------ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½---------------------
+void SortPlayers(_vector <Player> vec_of_players);
 bool UpSortByNick(Player a, Player b);
 bool DownSortByNick(Player a, Player b);
 bool UpSortByLevel(Player a, Player b);
 bool DownSortByLevel(Player a, Player b);
 bool UpSortByScore(Player a, Player b);
 bool DownSortByScore(Player a, Player b);
-//--------------------ÏÎÈÑÊ---------------------
-void SearchPlayer(vector<Player> vec_of_players);
-void SearchByLevel(vector<Player> vec_of_players);
-void SearchByNick(vector<Player> vec_of_players);
-void SearchByScore(vector<Player> vec_of_players);
-int FindPlayerIndex(vector<Player> vec_of_players, string nick);
-//---------------------ÀÄÌÈÍ---------------------
-void adminMenu(string& file, vector<Player>& vec_of_players, Player& player);
-void adminSystemWorkMenu(string& file, vector <Player>& vec_of_players);
-void ChangeAccess(string& file, vector <Player>& vec_of_players);
+//--------------------ï¿½ï¿½ï¿½ï¿½ï¿½---------------------
+void SearchPlayer(_vector<Player> vec_of_players);
+void SearchByLevel(_vector<Player> vec_of_players);
+void SearchByNick(_vector<Player> vec_of_players);
+void SearchByScore(_vector<Player> vec_of_players);
+int FindPlayerIndex(_vector<Player> vec_of_players, string nick);
+//---------------------ï¿½ï¿½ï¿½ï¿½ï¿½---------------------
+void adminMenu(string& file, _vector<Player>& vec_of_players, Player& player);
+void adminSystemWorkMenu(string& file, _vector <Player>& vec_of_players);
+void ChangeAccess(string& file, _vector <Player>& vec_of_players);
 int changeOpposite(int num);
-void DeletePlayer(vector <Player>& vec_of_players);
+void DeletePlayer(_vector <Player>& vec_of_players);
 bool isTrue();
-bool  isNickDuplicate(vector<Player>& vec_of_players, string nick);
+bool  isNickDuplicate(_vector<Player>& vec_of_players, string nick);
 bool findDuplicate(string first_item, string second_item);
-
 
